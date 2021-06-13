@@ -65,7 +65,7 @@
 			ammo_magazine.stored_ammo -= chambered
 
 	if (chambered)
-		return chambered.BB
+		return list(chambered.spent, chambered.projectile_type, chambered.bullet_name)
 	return null
 
 /obj/item/weapon/gun/projectile/handle_post_fire()
@@ -100,7 +100,7 @@
 			for(var/obj/item/ammo_casing/temp_casing in chambered.loc)
 				if(temp_casing == chambered)
 					continue
-				if((temp_casing.desc == chambered.desc) && !temp_casing.BB)
+				if((temp_casing.desc == chambered.desc) && temp_casing.spent)
 					var/temp_amount = temp_casing.amount + chambered.amount
 					if(temp_amount > chambered.maxamount)
 						temp_casing.amount -= (chambered.maxamount - chambered.amount)
@@ -215,8 +215,7 @@
 			inserted_casing.icon_state = C.icon_state
 			inserted_casing.spent_icon = C.spent_icon
 			inserted_casing.maxamount = C.maxamount
-			if(ispath(inserted_casing.projectile_type) && C.BB)
-				inserted_casing.BB = new inserted_casing.projectile_type(inserted_casing)
+			inserted_casing.spent = C.spent
 
 			inserted_casing.sprite_use_small = C.sprite_use_small
 			inserted_casing.sprite_max_rotate = C.sprite_max_rotate
@@ -363,17 +362,17 @@
 /obj/item/weapon/gun/projectile/get_dud_projectile()
 	var/proj_type
 	if(chambered)
-		proj_type = chambered.BB.type
+		proj_type = chambered.projectile_type
 	else if(loaded.len)
 		var/obj/item/ammo_casing/A = loaded[1]
-		if(!A.BB)
+		if(A.spent)
 			return null
-		proj_type = A.BB.type
+		proj_type = A.projectile_type
 	else if(ammo_magazine && ammo_magazine.stored_ammo.len)
 		var/obj/item/ammo_casing/A = ammo_magazine.stored_ammo[1]
-		if(!A.BB)
+		if(A.spent)
 			return null
-		proj_type = A.BB.type
+		proj_type = A.projectile_type
 	if(!proj_type)
 		return null
 	return new proj_type

@@ -310,11 +310,17 @@
 	//actually attempt to shoot
 	var/turf/targloc = get_turf(target) //cache this in case target gets deleted during shooting, e.g. if it was a securitron that got destroyed.
 	for(var/i in 1 to burst)
-		var/obj/projectile = consume_next_projectile(user)
-		if(!projectile)
+		var/projectile_data =  consume_next_projectile(user) // they wanted to keep bullet inscribing code
+		if(!projectile_data || projectile_data[1])
 			handle_click_empty(user)
 			break
+		if(!ispath(projectile_data[2]))
+			CRASH("projectile_type is supposed to be a path, non-paths are incompatible")
+		var/to_make_projectile = projectile_data[2] // I don't know why I have to do this, so there's probably a cleaner way.
+		var/obj/projectile = new to_make_projectile (src)
 
+
+		projectile.name = projectile_data[3] // bullet inscribing
 		projectile.multiply_projectile_damage(damage_multiplier)
 
 		projectile.multiply_projectile_penetration(penetration_multiplier + user.stats.getStat(STAT_VIG) * 0.02)

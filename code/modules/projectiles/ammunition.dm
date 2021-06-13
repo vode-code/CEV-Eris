@@ -11,8 +11,9 @@
 	var/leaves_residue = 1
 	var/is_caseless = FALSE
 	var/caliber = ""					//Which kind of guns it can be loaded into
-	var/projectile_type					//The bullet type to create when New() is called
-	var/obj/item/projectile/BB			//The loaded bullet - make it so that the projectiles are created only when needed?
+	var/obj/item/projectile_type = /obj/item/projectile		//The bullet type to create when New() is called
+	var/bullet_name = ""
+	var/spent = FALSE
 	var/spent_icon
 	var/amount = 1
 	var/maxamount = 15
@@ -32,8 +33,7 @@
 			src.transform = rotation_matrix * sprite_scale
 		else
 			src.transform = rotation_matrix
-	if(ispath(projectile_type))
-		BB = new projectile_type(src)
+	bullet_name = initial(projectile_type.name) // removed bullet on init
 	pixel_x = rand(-10, 10)
 	pixel_y = rand(-10, 10)
 	if(amount > 1)
@@ -41,8 +41,7 @@
 
 //removes the projectile from the ammo casing
 /obj/item/ammo_casing/proc/expend()
-	. = BB
-	BB = null
+	spent = TRUE
 	set_dir(pick(cardinal)) //spin spent casings
 	update_icon()
 
@@ -57,11 +56,7 @@
 		new_casing.icon_state = src.icon_state
 		new_casing.spent_icon = src.spent_icon
 		new_casing.maxamount = src.maxamount
-		if(ispath(new_casing.projectile_type) && src.BB)
-			new_casing.BB = new new_casing.projectile_type(new_casing)
-		else
-			new_casing.BB = null
-
+		new_casing.spent = src.spent
 		new_casing.sprite_max_rotate = src.sprite_max_rotate
 		new_casing.sprite_scale = src.sprite_scale
 		new_casing.sprite_use_small = src.sprite_use_small
@@ -86,20 +81,20 @@
 
 /obj/item/ammo_casing/attackby(obj/item/I, mob/user)
 	if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING, QUALITY_CUTTING), src))
-		if(!BB)
+		if(spent)
 			to_chat(user, SPAN_NOTICE("There is no bullet in the casing to inscribe anything into."))
 			return
 
 		var/tmp_label = ""
-		var/label_text = sanitizeSafe(input(user, "Inscribe some text into \the [initial(BB.name)]","Inscription",tmp_label), MAX_NAME_LEN)
+		var/label_text = sanitizeSafe(input(user, "Inscribe some text into \the [bullet_name]","Inscription",tmp_label), MAX_NAME_LEN)
 		if(length(label_text) > 20)
 			to_chat(user, SPAN_WARNING("The inscription can be at most 20 characters long."))
 		else if(!label_text)
-			to_chat(user, SPAN_NOTICE("You scratch the inscription off of [initial(BB)]."))
-			BB.name = initial(BB.name)
+			to_chat(user, SPAN_NOTICE("You scratch the inscription off of [bullet_name]."))
+			bullet_name = initial(projectile_type.name)
 		else
-			to_chat(user, SPAN_NOTICE("You inscribe \"[label_text]\" into \the [initial(BB.name)]."))
-			BB.name = "[initial(BB.name)] (\"[label_text]\")"
+			to_chat(user, SPAN_NOTICE("You inscribe \"[label_text]\" into \the [bullet_name]."))
+			bullet_name = "[initial(projectile_type.name)] (\"[label_text]\")"
 		return TRUE
 	else if(istype(I, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/merging_casing = I
@@ -129,7 +124,7 @@
 		if(!noMessage)
 			to_chat(user, SPAN_WARNING("[src] is fully stacked!"))
 		return FALSE
-	if((!src.BB && AC.BB) || (src.BB && !AC.BB))
+	if((!spent && AC.spent) || (spent && !spent))
 		if(!noMessage)
 			to_chat(user, SPAN_WARNING("Fired and non-fired ammo wont stack."))
 		return FALSE
@@ -153,7 +148,7 @@
 	return TRUE
 
 /obj/item/ammo_casing/on_update_icon()
-	if(spent_icon && !BB)
+	if(spent_icon && spent)
 		icon_state = spent_icon
 	src.cut_overlays()
 	if(amount > 1)
@@ -174,7 +169,7 @@
 /obj/item/ammo_casing/examine(mob/user)
 	..()
 	to_chat(user, "There [(amount == 1)? "is" : "are"] [amount] round\s left!")
-	if (!BB)
+	if (spent)
 		to_chat(user, "[(amount == 1)? "This one is" : "These ones are"] spent.")
 
 //An item that holds casings and can be used to put them inside guns
@@ -321,8 +316,7 @@
 		inserted_casing.icon_state = C.icon_state
 		inserted_casing.spent_icon = C.spent_icon
 		inserted_casing.maxamount = C.maxamount
-		if(ispath(inserted_casing.projectile_type) && C.BB)
-			inserted_casing.BB = new inserted_casing.projectile_type(inserted_casing)
+		inserted_casing.spent = C.spent
 
 		inserted_casing.sprite_max_rotate = C.sprite_max_rotate
 		inserted_casing.sprite_scale = C.sprite_scale

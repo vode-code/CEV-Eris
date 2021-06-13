@@ -24,7 +24,7 @@
 
 /obj/item/weapon/gun/projectile/shotgun/pump/consume_next_projectile()
 	if(chambered)
-		return chambered.BB
+		return list(chambered.spent, chambered.projectile_type, chambered.bullet_name)
 	return null
 
 /obj/item/weapon/gun/projectile/shotgun/pump/attack_self(mob/living/user)

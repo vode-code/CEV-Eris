@@ -38,7 +38,7 @@
 	var/turf/newloc = get_turf(src)
 	playsound(M, 'sound/weapons/shotgunpump.ogg', 60, 1)
 	if(chambered)
-		if(!chambered.BB)
+		if(chambered.spent)
 			chambered.forceMove(newloc) //Eject casing
 			chambered = null
 	if(!chambered)
@@ -46,13 +46,13 @@
 			var/obj/item/ammo_casing/AC = loaded[1] //load next casing.
 			loaded -= AC //Remove casing from loaded list.
 			chambered = AC
-			if(chambered.BB != null)
+			if(!chambered.spent)
 				reload = 0
 	update_icon()
 
 /obj/item/weapon/gun/projectile/shotgun/bull/consume_next_projectile()
 	if (chambered)
-		return chambered.BB
+		return list(chambered.spent, chambered.projectile_type, chambered.bullet_name)
 	return null
 
 /obj/item/weapon/gun/projectile/shotgun/bull/handle_post_fire()
