@@ -64,9 +64,8 @@
 		if(handle_casings != HOLD_CASINGS)
 			ammo_magazine.stored_ammo -= chambered
 
-	if (chambered)
-		return list(chambered.spent, chambered.projectile_type, chambered.bullet_name)
-	return null
+	if (chambered && !chambered.spent)
+		return list(chambered.projectile_type, chambered.bullet_name)
 
 /obj/item/weapon/gun/projectile/handle_post_fire()
 	..()

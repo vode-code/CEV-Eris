@@ -51,9 +51,8 @@
 	update_icon()
 
 /obj/item/weapon/gun/projectile/shotgun/bull/consume_next_projectile()
-	if (chambered)
-		return list(chambered.spent, chambered.projectile_type, chambered.bullet_name)
-	return null
+	if (chambered && !chambered.spent)
+		return list(chambered.projectile_type, chambered.bullet_name)
 
 /obj/item/weapon/gun/projectile/shotgun/bull/handle_post_fire()
 	..()

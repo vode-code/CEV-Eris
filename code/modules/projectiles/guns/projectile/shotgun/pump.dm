@@ -23,9 +23,8 @@
 	spawn_tags = SPANW_TAG_FS_SHOTGUN
 
 /obj/item/weapon/gun/projectile/shotgun/pump/consume_next_projectile()
-	if(chambered)
-		return list(chambered.spent, chambered.projectile_type, chambered.bullet_name)
-	return null
+	if(chambered && !chambered.spent)
+		return list(chambered.projectile_type, chambered.bullet_name)
 
 /obj/item/weapon/gun/projectile/shotgun/pump/attack_self(mob/living/user)
 	if(world.time >= recentpumpmsg + 10)
