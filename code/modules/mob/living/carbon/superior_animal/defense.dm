@@ -47,17 +47,19 @@
 		if (I_GRAB)
 			if(M == src || anchored)
 				return 0
-			for(var/obj/item/weapon/grab/G in src.grabbed_by)
+			for(var/obj/item/grab/G in src.grabbed_by)
 				if(G.assailant == M)
 					to_chat(M, SPAN_NOTICE("You already grabbed [src]."))
 					return
 
-			var/obj/item/weapon/grab/G = new /obj/item/weapon/grab(M, src)
+			var/obj/item/grab/G = new /obj/item/grab(M, src)
 			if(buckled)
 				to_chat(M, SPAN_NOTICE("You cannot grab [src], \he is buckled in!"))
 			if(!G) //the grab will delete itself in New if affecting is anchored
 				return
 
+			if (M in friends)
+				grabbed_by_friend = TRUE // disables AI for easier wrangling
 			M.put_in_active_hand(G)
 			G.synch()
 			LAssailant = M
