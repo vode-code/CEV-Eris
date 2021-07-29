@@ -23,14 +23,11 @@
 	ASSERT(istype(target))
 	. = FALSE
 	for(var/obj/item/ammo_casing/I in target)
-		if(stored_ammo.len >= max_ammo)
+		if(ammo_amount >= max_ammo)
 			break
 		if(I.caliber == src.caliber)
-			for(var/j = 1 to I.amount)
-				if(stored_ammo.len >= max_ammo)
-					break
+			if (insertCasing(I, I.amount))
 				. |= TRUE
-				insertCasing(I)
 	if(user)
 		if(.)
 			user.visible_message(SPAN_NOTICE("[user] scoopes some ammo in [src]."),SPAN_NOTICE("You scoop some ammo in [src]."),SPAN_NOTICE("You hear metal clanging."))

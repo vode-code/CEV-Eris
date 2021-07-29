@@ -78,7 +78,7 @@
 /obj/item/gun/projectile/dartgun/on_update_icon()
 	..()
 	if(ammo_magazine)
-		icon_state = "dartgun-[round(ammo_magazine.stored_ammo.len,2)]"
+		icon_state = "dartgun-[round(ammo_magazine.ammo_amount,2)]"
 	else
 		icon_state = "dartgun-empty"
 	return
@@ -148,8 +148,8 @@
 		dat += "There are no beakers inserted!<br><br>"
 
 	if(ammo_magazine)
-		if(ammo_magazine.stored_ammo && ammo_magazine.stored_ammo.len)
-			dat += "The dart cartridge has [ammo_magazine.stored_ammo.len] shots remaining."
+		if(ammo_magazine.ammo_amount)
+			dat += "The dart cartridge has [ammo_magazine.ammo_amount] shots remaining."
 		else
 			dat += "<font color='red'>The dart cartridge is empty!</font>"
 		dat += " \[<A href='?src=\ref[src];eject_cart=1'>Eject</A>\]"

@@ -42,9 +42,8 @@
 			chambered.forceMove(newloc) //Eject casing
 			chambered = null
 	if(!chambered)
-		if(loaded.len)
-			var/obj/item/ammo_casing/AC = loaded[1] //load next casing.
-			loaded -= AC //Remove casing from loaded list.
+		if(ammo_amount)
+			var/obj/item/ammo_casing/AC = removeCasing() //load next casing.
 			chambered = AC
 			if(!chambered.spent)
 				reload = 0
@@ -52,7 +51,8 @@
 
 /obj/item/gun/projectile/shotgun/bull/consume_next_projectile()
 	if (chambered && !chambered.spent)
-		return list(chambered.projectile_type, chambered.bullet_name)
+		chambered.expend()
+		return chambered.projectile_type
 
 /obj/item/gun/projectile/shotgun/bull/handle_post_fire()
 	..()
@@ -61,9 +61,8 @@
 		chambered.forceMove(newloc) //Eject casing
 		chambered = null
 		if(!reload)
-			if(loaded.len)
-				var/obj/item/ammo_casing/AC = loaded[1] //load next casing.
-				loaded -= AC //Remove casing from loaded list.
+			if(ammo_amount)
+				var/obj/item/ammo_casing/AC = removeCasing() //load next casing.
 				chambered = AC
 	reload = 1
 

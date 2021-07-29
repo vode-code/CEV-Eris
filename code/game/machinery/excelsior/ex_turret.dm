@@ -63,20 +63,15 @@
 	return FALSE
 
 /obj/machinery/porta_turret/excelsior/attackby(obj/item/ammo_magazine/I, mob/user)
-	if(istype(I, ammo_box) && I.stored_ammo.len)
+	if(I.caliber == ammo_box.caliber && I.ammo_amount)
 		if(ammo >= ammo_max)
 			to_chat(user, SPAN_NOTICE("You cannot load more than [ammo_max] ammo."))
 			return
 
-		var/transfered_ammo = 0
-		for(var/obj/item/ammo_casing/AC in I.stored_ammo)
-			I.stored_ammo -= AC
-			qdel(AC)
-			ammo++
-			transfered_ammo++
-			if(ammo == ammo_max)
-				break
-		to_chat(user, SPAN_NOTICE("You loaded [transfered_ammo] bullets into [src]. It now contains [ammo] ammo."))
+		var/obj/item/ammo_casing/transferred_ammo = I.removeCasing(ammo_max - ammo, create = FALSE) //just a number
+		ammo += transferred_ammo
+
+		to_chat(user, SPAN_NOTICE("You loaded [transferred_ammo] bullets into [src]. It now contains [ammo] ammo."))
 	else
 		..()
 

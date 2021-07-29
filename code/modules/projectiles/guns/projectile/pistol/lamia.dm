@@ -28,7 +28,7 @@
 /obj/item/gun/projectile/lamia/on_update_icon()
 	..()
 	if(ammo_magazine)
-		icon_state = "lamia-[round(ammo_magazine.stored_ammo.len,2)]"
+		icon_state = "lamia-[round(ammo_magazine.ammo_amount,2)]"
 	else
 		icon_state = "lamia"
 	return

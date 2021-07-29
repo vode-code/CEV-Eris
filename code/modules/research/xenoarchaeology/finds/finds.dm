@@ -361,24 +361,18 @@
 			new_gun.max_shells = rand(1,12)
 			if(prob(33))
 				var/num_bullets = rand(1,new_gun.max_shells)
-				if(num_bullets < new_gun.loaded.len)
-					new_gun.loaded.Cut()
+				if(num_bullets < new_gun.ammo_amount)
+					new_gun.removeCasing(new_gun.ammo_amount, create = FALSE)
 					for(var/i = 1, i <= num_bullets, i++)
 						var/A = new_gun.ammo_type
-						new_gun.loaded += new A(new_gun)
+						var/obj/item/ammo_casing/casing = new A(new_gun)
+						casing.amount = num_bullets
+						new_gun.insertCasing(casing, num_bullets)
 				else
-					for(var/obj/item/I in new_gun)
-						if(new_gun.loaded.len > num_bullets)
-							if(I in new_gun.loaded)
-								new_gun.loaded.Remove(I)
-								I.loc = null
-						else
-							break
+					if (new_gun.ammo_amount > num_bullets)
+						new_gun.removeCasing(new_gun.ammo_amount - num_bullets, create = FALSE)
 			else
-				for(var/obj/item/I in new_gun)
-					if(I in new_gun.loaded)
-						new_gun.loaded.Remove(I)
-						I.loc = null
+				new_gun.removeCasing(new_gun.ammo_amount, create = FALSE)
 
 			item_type = "gun"
 		if(28)

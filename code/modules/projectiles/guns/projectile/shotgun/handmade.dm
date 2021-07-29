@@ -23,13 +23,12 @@
 /obj/item/gun/projectile/shotgun/slidebarrel/load_ammo(obj/item/A, mob/user)
 	if(istype(A, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/C = A
-		if((load_method & SINGLE_CASING) && caliber == C.caliber && loaded.len)
+		if((load_method & SINGLE_CASING) && caliber == C.caliber && ammo_amount)
 			var/turf/newloc = get_turf(src)
 			playsound(user, 'sound/weapons/shotgunpump.ogg', 60, 1)
 			if(chambered)//We have a shell in the chamber
 				chambered.forceMove(newloc) //Eject casing
 				chambered = null
-			var/obj/item/ammo_casing/AC = loaded[1]
-			loaded -= AC
+			var/obj/item/ammo_casing/AC = removeCasing()
 			chambered = AC
 	..()

@@ -132,7 +132,7 @@
 
 /obj/item/gun/projectile/automatic/lmg/pk/mounted/mech/afterattack(atom/A, mob/living/user)
 	..()
-	if(ammo_magazine && ammo_magazine.stored_ammo && !ammo_magazine.stored_ammo.len)
+	if(ammo_magazine?.ammo_amount == 0)
 		qdel(ammo_magazine)
 		playsound(src.loc, 'sound/weapons/guns/interact/lmg_open.ogg', 100, 1)
 		var/mob/living/exosuit/E = loc

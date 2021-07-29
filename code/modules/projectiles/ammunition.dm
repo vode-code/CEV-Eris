@@ -12,7 +12,6 @@
 	var/is_caseless = FALSE
 	var/caliber = ""					//Which kind of guns it can be loaded into
 	var/obj/item/projectile_type = /obj/item/projectile		//The bullet type to create when New() is called
-	var/bullet_name = ""
 	var/spent = FALSE
 	var/spent_icon
 	var/amount = 1
@@ -33,17 +32,26 @@
 			src.transform = rotation_matrix * sprite_scale
 		else
 			src.transform = rotation_matrix
-	bullet_name = initial(projectile_type.name) // removed bullet on init
 	pixel_x = rand(-10, 10)
 	pixel_y = rand(-10, 10)
 	if(amount > 1)
 		update_icon()
 
-//removes the projectile from the ammo casing
+// returns a spent casing, which is a removed duplicate if amount is bigger than one, and is it otherwise
 /obj/item/ammo_casing/proc/expend()
-	spent = TRUE
-	set_dir(pick(cardinal)) //spin spent casings
-	update_icon()
+	if(amount > 1)
+		var/obj/item/ammo_casing/duplicate = duplicate()
+		duplicate.spent = TRUE
+		amount --
+		duplicate.set_dir(pick(cardinal)) //spin spent casings
+		duplicate.update_icon()
+		update_icon()
+		return duplicate
+	else
+		spent = TRUE
+		set_dir(pick(cardinal)) //spin spent casings
+		update_icon()
+		return src
 
 /obj/item/ammo_casing/attack_hand(mob/user)
 	if((src.amount > 1) && (src == user.get_inactive_hand()))
@@ -80,23 +88,7 @@
 		return ..()
 
 /obj/item/ammo_casing/attackby(obj/item/I, mob/user)
-	if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING, QUALITY_CUTTING), src))
-		if(spent)
-			to_chat(user, SPAN_NOTICE("There is no bullet in the casing to inscribe anything into."))
-			return
-
-		var/tmp_label = ""
-		var/label_text = sanitizeSafe(input(user, "Inscribe some text into \the [bullet_name]","Inscription",tmp_label), MAX_NAME_LEN)
-		if(length(label_text) > 20)
-			to_chat(user, SPAN_WARNING("The inscription can be at most 20 characters long."))
-		else if(!label_text)
-			to_chat(user, SPAN_NOTICE("You scratch the inscription off of [bullet_name]."))
-			bullet_name = initial(projectile_type.name)
-		else
-			to_chat(user, SPAN_NOTICE("You inscribe \"[label_text]\" into \the [bullet_name]."))
-			bullet_name = "[initial(projectile_type.name)] (\"[label_text]\")"
-		return TRUE
-	else if(istype(I, /obj/item/ammo_casing))
+	if(istype(I, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/merging_casing = I
 		if(isturf(src.loc))
 			if(merging_casing.amount == merging_casing.maxamount)
@@ -172,6 +164,31 @@
 	if (spent)
 		to_chat(user, "[(amount == 1)? "This one is" : "These ones are"] spent.")
 
+/obj/item/ammo_casing/proc/duplicate() // call this on a casing to get an identical casing
+	var/obj/item/ammo_casing/returned_casing = new()
+	returned_casing.name = name
+	returned_casing.desc = desc
+	returned_casing.caliber = caliber
+	returned_casing.projectile_type = projectile_type
+	returned_casing.icon_state = icon_state
+	returned_casing.spent_icon = spent_icon
+	returned_casing.maxamount = maxamount
+	returned_casing.spent = spent
+	returned_casing.sprite_max_rotate = sprite_max_rotate
+	returned_casing.sprite_scale = sprite_scale
+	returned_casing.sprite_use_small = sprite_use_small
+	returned_casing.sprite_update_spawn = sprite_update_spawn
+	if(returned_casing.sprite_update_spawn)
+		var/matrix/rotation_matrix = matrix()
+		rotation_matrix.Turn(round(45 * rand(0, returned_casing.sprite_max_rotate) / 2))
+		if(returned_casing.sprite_use_small)
+			returned_casing.transform = rotation_matrix * returned_casing.sprite_scale
+		else
+			returned_casing.transform = rotation_matrix
+	returned_casing.is_caseless = is_caseless
+	returned_casing.update_icon()
+	return returned_casing
+
 //An item that holds casings and can be used to put them inside guns
 /obj/item/ammo_magazine
 	name = "magazine"
@@ -193,7 +210,9 @@
 
 	var/ammo_color = ""		//For use in modular sprites
 
-	var/list/stored_ammo = list()
+	var/list/internal_piles = list() // tracks stored ammo piles
+	var/list/bullet_order = list() // tracks the bullet order by referencing the piles list
+	var/ammo_amount // tracks how much ammo is actually in the magazine
 	var/mag_type = SPEEDLOADER //ammo_magazines can only be used with compatible guns. This is not a bitflag, the load_method var on guns is.
 	var/mag_well = MAG_WELL_GENERIC
 	var/caliber = CAL_357
@@ -218,14 +237,29 @@
 		initial_ammo = max_ammo
 
 	if(initial_ammo)
-		for(var/i in 1 to initial_ammo)
-			stored_ammo += new ammo_type(src)
+		var/remainder = initial_ammo
+		while(remainder > 0) //giant magazines make limiting this implausible
+			var/obj/item/ammo_casing/current_pile = new ammo_type(src)
+			internal_piles += current_pile
+			if (remainder >= current_pile.maxamount)
+				current_pile.amount = current_pile.maxamount
+				ammo_amount += current_pile.maxamount
+				remainder -= current_pile.maxamount
+			else
+				current_pile.amount = remainder
+				ammo_amount += remainder
+				remainder = 0
+		var/pilenum = 0
+		for(var/obj/item/ammo_casing/pile in internal_piles)
+			pilenum ++
+			for(var/i = 0, i < pile.amount, i++)
+				bullet_order.Add(pilenum)
 	update_icon()
 
 /obj/item/ammo_magazine/attackby(obj/item/W as obj, mob/user as mob)
 	if(istype(W, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/C = W
-		if(stored_ammo.len >= max_ammo)
+		if(ammo_amount >= max_ammo)
 			to_chat(user, SPAN_WARNING("\The [src] is full!"))
 			return
 		if(C.caliber != caliber)
@@ -234,20 +268,23 @@
 		insertCasing(C)
 	else if(istype(W, /obj/item/ammo_magazine))
 		var/obj/item/ammo_magazine/other = W
-		if(!src.stored_ammo.len)
+		if(!src.ammo_amount)
 			to_chat(user, SPAN_WARNING("There is no ammo in \the [src]!"))
 			return
-		if(other.stored_ammo.len >= other.max_ammo)
+		if(other.ammo_amount >= other.max_ammo)
 			to_chat(user, SPAN_NOTICE("\The [other] is already full."))
 			return
 		var/diff = FALSE
-		for(var/obj/item/ammo in src.stored_ammo)
-			if(other.stored_ammo.len < other.max_ammo && do_after(user, reload_delay/other.max_ammo, src) && other.insertCasing(removeCasing()))
+		var/moved_ammo = 0 //used to avoid creating casings then deleting them
+		while(other.ammo_amount + moved_ammo < other.max_ammo && ammo_amount > moved_ammo)
+			if(do_after(user, reload_delay/other.max_ammo, src))
 				diff = TRUE
+				moved_ammo++
 				continue
 			break
+		other.insertCasing(removeCasing(moved_ammo), moved_ammo)
 		if(diff)
-			to_chat(user, SPAN_NOTICE("You finish loading \the [other]. It now contains [other.stored_ammo.len] rounds, and \the [src] now contains [stored_ammo.len] rounds."))
+			to_chat(user, SPAN_NOTICE("You finish loading \the [other]. It now contains [other.ammo_amount] rounds, and \the [src] now contains [ammo_amount] rounds."))
 		else
 			to_chat(user, SPAN_WARNING("You fail to load anything into \the [other]"))
 	if(istype(W, /obj/item/gun/projectile))
@@ -260,20 +297,17 @@
 			visible_message("[user] tactically reloads [W] using only one hand!")	
 
 /obj/item/ammo_magazine/attack_hand(mob/user)
-	if(user.get_inactive_hand() == src && stored_ammo.len)
-		var/obj/item/ammo_casing/stack = removeCasing()
-		if(stack)
-			if(stored_ammo.len)
-				// We end on -1 since we already removed one
-				for(var/i = 1, i <= stack.maxamount - 1, i++)
-					if(!stored_ammo.len)
-						break
-					var/obj/item/ammo_casing/AC = removeCasing()
-					if(!stack.mergeCasing(AC, null, user, noIconUpdate = TRUE))
-						insertCasing(AC)
-						break
-			stack.update_icon()
-			user.put_in_active_hand(stack)
+	if(user.get_inactive_hand() == src && ammo_amount)
+		var/stackposition = bullet_order[1]
+		var/obj/item/ammo_casing/stack = internal_piles[stackposition]
+		for(var/bulletindex in bullet_order)
+			if(bulletindex == stackposition)
+				bullet_order.Remove(bulletindex)
+			else if(bulletindex > stackposition)
+				bulletindex --
+		internal_piles.Remove(stack)
+		ammo_amount -= stack.amount
+		user.put_in_active_hand(stack)
 		return
 	..()
 
@@ -281,78 +315,138 @@
 	var/obj/item/W = user.get_active_hand()
 	if(istype(W, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/C = W
-		if(stored_ammo.len >= max_ammo)
+		if(ammo_amount >= max_ammo)
 			to_chat(user, SPAN_WARNING("[src] is full!"))
 			return
 		if(C.caliber != caliber)
 			to_chat(user, SPAN_WARNING("[C] does not fit into [src]."))
 			return
-		if(stored_ammo.len)
+		if(ammo_amount)
 			var/obj/item/ammo_casing/T = removeCasing()
 			if(T)
 				if(!C.mergeCasing(T, null, user))
 					insertCasing(T)
 	else if(!W)
-		if(user.get_inactive_hand() == src && stored_ammo.len)
+		if(user.get_inactive_hand() == src && ammo_amount)
 			var/obj/item/ammo_casing/AC = removeCasing()
 			if(AC)
 				user.put_in_active_hand(AC)
 
-/obj/item/ammo_magazine/proc/insertCasing(var/obj/item/ammo_casing/C)
+// cycle sends it to the end of bullet_order instead of the start
+/obj/item/ammo_magazine/proc/insertCasing(var/obj/item/ammo_casing/C, var/inserted_amount = 1, var/cycle_casings = FALSE)
 	if(!istype(C))
 		return FALSE
 	if(C.caliber != caliber)
 		return FALSE
-	if(stored_ammo.len >= max_ammo)
+	if(ammo_amount >= max_ammo)
 		return FALSE
-	if(C.amount > 1)
-		C.amount -= 1
-
-		var/obj/item/ammo_casing/inserted_casing = new /obj/item/ammo_casing(src)
-		inserted_casing.name = C.name
-		inserted_casing.desc = C.desc
-		inserted_casing.caliber = C.caliber
-		inserted_casing.projectile_type = C.projectile_type
-		inserted_casing.icon_state = C.icon_state
-		inserted_casing.spent_icon = C.spent_icon
-		inserted_casing.maxamount = C.maxamount
-		inserted_casing.spent = C.spent
-
-		inserted_casing.sprite_max_rotate = C.sprite_max_rotate
-		inserted_casing.sprite_scale = C.sprite_scale
-		inserted_casing.sprite_use_small = C.sprite_use_small
-		inserted_casing.sprite_update_spawn = C.sprite_update_spawn
-
-		if(inserted_casing.sprite_update_spawn)
-			var/matrix/rotation_matrix = matrix()
-			rotation_matrix.Turn(round(45 * rand(0, inserted_casing.sprite_max_rotate) / 2))
-			if(inserted_casing.sprite_use_small)
-				inserted_casing.transform = rotation_matrix * inserted_casing.sprite_scale
-			else
-				inserted_casing.transform = rotation_matrix
-
-		inserted_casing.is_caseless = C.is_caseless
-
-		C.update_icon()
-		inserted_casing.update_icon()
-		stored_ammo.Insert(1, inserted_casing)
-	else
+	if (C.amount < inserted_amount)
+		inserted_amount = C.amount
+	if (inserted_amount > max_ammo - ammo_amount)
+		inserted_amount = max_ammo - ammo_amount
+	C.amount -= inserted_amount
+	for(var/loop = 0, loop < inserted_amount, loop ++)
+		var/needsnewpile = TRUE
+		var/pilenum = 0
+		for(var/obj/item/ammo_casing/ammo_pile in internal_piles)
+			pilenum ++
+			if(ammo_pile.amount < ammo_pile.maxamount)
+				if(C.projectile_type == ammo_pile.projectile_type && C.spent == ammo_pile.spent)
+					ammo_pile.amount ++
+					needsnewpile = FALSE
+					break
+		if(needsnewpile)
+			var/obj/item/ammo_casing/newpile = C.duplicate()
+			internal_piles.Add(newpile)
+			pilenum ++
+		if (cycle_casings)
+			bullet_order.Add(1, pilenum)
+		else
+			bullet_order.Insert(1, pilenum)
+	C.update_icon()
+	ammo_amount += inserted_amount
+	if(C.amount <= 0)
 		if(ismob(C.loc))
 			var/mob/M = C.loc
 			M.remove_from_mob(C)
-		C.forceMove(src)
-		stored_ammo.Insert(1, C) //add to the head of the list
+		qdel(C)
 	update_icon()
 	return TRUE
 
-/obj/item/ammo_magazine/proc/removeCasing()
-	if(stored_ammo.len)
-		var/obj/item/ammo_casing/AC = stored_ammo[1]
-		stored_ammo -= AC
-		if(!stored_ammo.len)
-			stored_ammo.Cut()
-		update_icon()
-		return AC
+// disabling pile makes the casings returned be in order instead of stacked
+// disabling create makes it never create the casings
+/obj/item/ammo_magazine/proc/removeCasing(var/removed_amount = 1, var/pile = TRUE, var/create = TRUE)
+	if(ammo_amount)
+		if (removed_amount == 1)
+			var/obj/item/ammo_casing/piletoget = internal_piles[bullet_order[1]]
+			var/obj/item/ammo_casing/returned_casing = create ? piletoget.duplicate() : 1
+			piletoget.amount --		
+			ammo_amount --
+			if(piletoget.amount <= 0)
+				var/pilelistposition = bullet_order[1]
+				for(var/bulletindex in bullet_order)
+					if(bulletindex > pilelistposition)
+						bulletindex --
+				internal_piles.Remove(piletoget)
+				qdel(piletoget)
+			bullet_order.Cut(1,2)
+			update_icon()
+			return returned_casing
+		else if (removed_amount > 1)
+			if (removed_amount > ammo_amount)
+				removed_amount = ammo_amount
+			if (create)
+				var/list/returned_piles = list()
+				for(var/loop = 0, loop < removed_amount, loop++)
+					var/test = internal_piles[bullet_order[1]]
+					var/obj/item/ammo_casing/piletoget = test
+					var/needsnewpile = TRUE
+					if (pile)
+						for(var/obj/item/ammo_casing/ammo_pile in returned_piles)
+							if(piletoget.projectile_type == ammo_pile.projectile_type && piletoget.spent == ammo_pile.spent)
+								ammo_pile.amount ++
+								needsnewpile = FALSE
+								break
+					else
+						var/obj/item/ammo_casing/ammo_pile = returned_piles[length(returned_piles)]
+						if(piletoget.projectile_type == ammo_pile.projectile_type && piletoget.spent == ammo_pile.spent)
+							ammo_pile.amount ++
+							needsnewpile = FALSE
+					if(needsnewpile)
+						var/newpile = piletoget.duplicate()
+						returned_piles += newpile
+					piletoget.amount --
+					ammo_amount --
+					if (piletoget.amount <= 0)
+						var/pilelistposition = internal_piles.Find(piletoget)
+						var/DANGERloop = 1 // used because subtraction did not work here, so I replaced instead. Also as a reference.
+						for(var/bulletindex in bullet_order)
+							if(bulletindex > pilelistposition)
+								bullet_order.Cut(DANGERloop, DANGERloop+1) // bullet_order.Splice: undefined proc
+								bullet_order.Insert(DANGERloop, bulletindex - 1) // I guess I'm just cursed.
+							DANGERloop ++
+						qdel(piletoget)
+						internal_piles.Remove(piletoget)
+					bullet_order.Cut(1,2)
+				return returned_piles
+				
+			else
+				for(var/loop = 0, loop < removed_amount, loop++)
+					var/obj/item/ammo_casing/piletoget = internal_piles[bullet_order[1]]
+					piletoget.amount --
+					if (piletoget.amount <= 0)
+						var/pilelistposition = bullet_order[1]
+						for(var/bulletindex in bullet_order)
+							if(bulletindex > pilelistposition)
+								bulletindex --
+						internal_piles.Remove(piletoget)
+						qdel(piletoget)
+					bullet_order.Cut(1,2)
+				ammo_amount -= removed_amount
+
+				return removed_amount
+		else
+			return FALSE
 
 /obj/item/ammo_magazine/resolve_attackby(atom/A, mob/user)
 	//Clicking on tile with no collectible items will empty it, if it has the verb to do that.
@@ -379,30 +473,31 @@
 		return
 	if(!Adjacent(usr))
 		return
-	if(!stored_ammo.len)
+	if(!ammo_amount)
 		to_chat(usr, SPAN_NOTICE("[src] is already empty!"))
 		return
 	to_chat(usr, SPAN_NOTICE("You take out ammo from [src]."))
-	for(var/i=1 to stored_ammo.len)
-		var/obj/item/ammo_casing/C = removeCasing()
-		C.forceMove(target)
-		C.set_dir(pick(cardinal))
+	for(var/obj/item/ammo_casing/pile in internal_piles)
+		pile.forceMove(target)
+		pile.set_dir(pick(cardinal))
+	bullet_order.Cut()
+	ammo_amount = 0
 	update_icon()
 
 /obj/item/ammo_magazine/on_update_icon()
 	if(multiple_sprites)
-		//find the lowest key greater than or equal to stored_ammo.len
+		//find the lowest key greater than or equal to ammo_amount
 		var/new_state = null
 		for(var/idx in 1 to icon_keys.len)
 			var/ammo_count = icon_keys[idx]
-			if (ammo_count >= stored_ammo.len)
+			if (ammo_count >= ammo_amount)
 				new_state = ammo_states[idx]
 				break
 		icon_state = (new_state)? new_state : initial(icon_state)
 
 /obj/item/ammo_magazine/examine(mob/user)
 	..()
-	to_chat(user, "There [(stored_ammo.len == 1)? "is" : "are"] [stored_ammo.len] round\s left!")
+	to_chat(user, "There [(ammo_amount == 1)? "is" : "are"] [ammo_amount] round\s left!")
 
 //magazine icon state caching
 /var/global/list/magazine_icondata_keys = list()

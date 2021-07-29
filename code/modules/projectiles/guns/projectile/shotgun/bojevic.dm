@@ -46,7 +46,7 @@
 		add_overlays("m12[ammo_magazine.ammo_color]")
 		itemstring += "_mag"
 
-	if(!ammo_magazine || !length(ammo_magazine.stored_ammo))
+	if(!ammo_magazine || !ammo_magazine.ammo_amount)
 		add_overlays("slide")
 
 	icon_state = iconstring

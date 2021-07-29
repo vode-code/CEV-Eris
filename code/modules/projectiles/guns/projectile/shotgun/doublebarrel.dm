@@ -91,7 +91,7 @@
 				if("No" == input(user, "There are attachments present. Would you like to destroy them?") in list("Yes", "No"))
 					return
 			to_chat(user, SPAN_NOTICE("You begin to shorten the barrel of \the [src]."))
-			if(loaded.len)
+			if(ammo_amount)
 				for(var/i in 1 to max_shells)
 					afterattack(user, user)	//will this work? //it will. we call it twice, for twice the FUN
 					playsound(user, fire_sound, 50, 1)

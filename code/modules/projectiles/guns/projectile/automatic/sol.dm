@@ -31,7 +31,7 @@
 /obj/item/gun/projectile/automatic/sol/proc/update_charge()
 	if(!ammo_magazine)
 		return
-	var/ratio = ammo_magazine.stored_ammo.len / ammo_magazine.max_ammo
+	var/ratio = ammo_magazine.ammo_amount / ammo_magazine.max_ammo
 	if(ratio < 0.25 && ratio != 0)
 		ratio = 0.25
 	ratio = round(ratio, 0.25) * 100

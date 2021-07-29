@@ -966,7 +966,7 @@
 
 /obj/item/ammo_magazine/get_item_cost(export)
 	. = ..()
-	for(var/obj/item/ammo_casing/i in stored_ammo)
+	for(var/obj/item/ammo_casing/i in internal_piles)
 		. += i.get_item_cost(export)
 
 /obj/item/ammo_casing/price_tag = 0.2

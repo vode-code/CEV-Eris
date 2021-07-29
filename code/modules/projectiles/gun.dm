@@ -223,8 +223,9 @@
 		return FALSE
 
 	if((CLUMSY in M.mutations) && prob(40)) //Clumsy handling
-		var/obj/P = consume_next_projectile()
-		if(P)
+		var/projectile = consume_next_projectile()		
+		if(projectile)
+			var/obj/P = new projectile(src)
 			if(process_projectile(P, user, user, pick(BP_L_LEG, BP_R_LEG)))
 				handle_post_fire(user, user)
 				user.visible_message(
@@ -236,8 +237,9 @@
 			handle_click_empty(user)
 		return FALSE
 	if(rigged)
-		var/obj/P = consume_next_projectile()
-		if(P)
+		var/projectile = consume_next_projectile()
+		if(projectile)
+			var/obj/P = new projectile(src)
 			if(process_projectile(P, user, user, BP_HEAD))
 				handle_post_fire(user, user)
 				user.visible_message(
@@ -327,17 +329,16 @@
 	//actually attempt to shoot
 	var/turf/targloc = get_turf(target) //cache this in case target gets deleted during shooting, e.g. if it was a securitron that got destroyed.
 	for(var/i in 1 to burst)
-		var/projectile_data =  consume_next_projectile(user) // they wanted to keep bullet inscribing code
+		var/projectile_data =  consume_next_projectile(user)
 		if(!projectile_data)
 			handle_click_empty(user)
+			if(istype(src, /obj/item/gun/projectile))
+				var/obj/item/gun/projectile/ballistic = src // this code, it might not be so good...
+				ballistic.process_chambered()
 			break
-		if(!ispath(projectile_data[1]))
-			CRASH("projectile_type is supposed to be a path, non-paths are incompatible")
-		var/to_make_projectile = projectile_data[1] // I don't know why I have to do this, so there's probably a cleaner way.
-		var/obj/projectile = new to_make_projectile (src)
+		var/obj/projectile = new projectile_data (src)
 
 
-		projectile.name = projectile_data[2] // bullet inscribing
 		projectile.multiply_projectile_damage(damage_multiplier)
 
 		projectile.multiply_projectile_penetration(penetration_multiplier + user.stats.getStat(STAT_VIG) * 0.02)
@@ -500,8 +501,9 @@
 		handle_click_empty(user)
 		mouthshoot = FALSE
 		return
-	var/obj/item/projectile/in_chamber = consume_next_projectile()
-	if (istype(in_chamber))
+	var/projectile = consume_next_projectile()
+	if (projectile)
+		var/obj/item/projectile/in_chamber = new projectile(src)
 		user.visible_message(SPAN_WARNING("[user] pulls the trigger."))
 		if(silenced)
 			playsound(user, fire_sound, 10, 1)

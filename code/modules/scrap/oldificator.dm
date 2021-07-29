@@ -144,14 +144,11 @@
 	return
 
 /obj/item/ammo_magazine/make_old(low_quality_oldification)
-	var/del_count = rand(0, stored_ammo.len)
+	var/del_count = rand(0, ammo_amount)
 	if(low_quality_oldification)
-		del_count = rand(0, contents.len / 2)
+		del_count = rand(0, ammo_amount / 2)
 
-	for(var/i = 1 to del_count)
-		var/removed_item = pick(stored_ammo)
-		stored_ammo -= removed_item
-		QDEL_NULL(removed_item)
+	removeCasing(del_count, create = FALSE)
 	..()
 
 /obj/item/cell/make_old(low_quality_oldification)

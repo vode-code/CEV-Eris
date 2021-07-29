@@ -329,16 +329,16 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/ammobox/lrifle/pk/on_update_icon()
-	if (!stored_ammo.len)
+	if (!ammo_amount)
 		icon_state = "pk_box-0"
 		return
-	if (stored_ammo.len == max_ammo)
+	if (ammo_amount == max_ammo)
 		icon_state = "pk_box"
 		return
 
 	var/number = 0
-	if (stored_ammo.len && max_ammo)
-		var/percent = (stored_ammo.len / max_ammo) * 100
+	if (ammo_amount && max_ammo)
+		var/percent = (ammo_amount / max_ammo) * 100
 		number = round(percent, 25)
 	icon_state = "pk_box-[number]"
 

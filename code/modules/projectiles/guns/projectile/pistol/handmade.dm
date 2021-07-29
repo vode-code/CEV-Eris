@@ -29,7 +29,7 @@
 		to_chat(user, SPAN_WARNING("[src] is jammed!"))
 		return 0
 	else
-		if(loaded.len && prob(jam_chance)) //you know, when you try to shot and "aaaaawwwww fuk"
+		if(ammo_amount && prob(jam_chance)) //you know, when you try to shot and "aaaaawwwww fuk"
 			jammed = TRUE
 			playsound(src.loc, 'sound/weapons/guns/interact/hpistol_cock.ogg', 70, 1)
 			to_chat(user, SPAN_DANGER("[src] is jammed!"))
@@ -65,8 +65,7 @@
 	src.chamber_open = TRUE
 	icon_state = "hm_pistol_open"
 	playsound(src.loc, 'sound/weapons/guns/interact/batrifle_magout.ogg', 65, 1)
-	if(loaded.len)
-		var/obj/item/ammo_casing/our_bullet = loaded[1]
-		our_bullet.loc = get_turf(src)
-		loaded -= our_bullet
+	if(ammo_amount)
+		var/obj/item/ammo_casing/removed = removeCasing(chambered)
+		removed.forceMove(get_turf(src))
 		chambered = null

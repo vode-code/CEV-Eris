@@ -24,7 +24,7 @@
 
 /obj/item/gun/projectile/shotgun/pump/consume_next_projectile()
 	if(chambered && !chambered.spent)
-		return list(chambered.projectile_type, chambered.bullet_name)
+		return chambered.projectile_type
 
 /obj/item/gun/projectile/shotgun/pump/attack_self(mob/living/user)
 	if(world.time >= recentpumpmsg + 10)
@@ -39,9 +39,8 @@
 		chambered.forceMove(newloc) //Eject casing
 		chambered = null
 
-	if(loaded.len)
-		var/obj/item/ammo_casing/AC = loaded[1] //load next casing.
-		loaded -= AC //Remove casing from loaded list.
+	if(ammo_amount)
+		var/obj/item/ammo_casing/AC = removeCasing() //load next casing.
 		chambered = AC
 
 	update_icon()

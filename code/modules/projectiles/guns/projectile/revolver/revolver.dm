@@ -34,9 +34,9 @@
 	visible_message(SPAN_WARNING("\The [usr] spins the cylinder of \the [src]!"), \
 	SPAN_NOTICE("You hear something metallic spin and click."))
 	playsound(src.loc, 'sound/weapons/revolver_spin.ogg', 100, 1)
-	loaded = shuffle(loaded)
-	if(rand(1,max_shells) > loaded.len)
-		chamber_offset = rand(0,max_shells - loaded.len)
+	bullet_order = shuffle(bullet_order)
+	if(rand(1,max_shells) > ammo_amount)
+		chamber_offset = rand(0,max_shells - ammo_amount)
 
 /obj/item/gun/projectile/revolver/consume_next_projectile()
 	if(chamber_offset)
@@ -52,7 +52,7 @@
 	if(!drawChargeMeter)
 		return
 	cut_overlays()
-	if(loaded.len==0)
+	if(ammo_amount == 0)
 		add_overlays("[icon_state]_off")
 	else
 		add_overlays("[icon_state]_on")

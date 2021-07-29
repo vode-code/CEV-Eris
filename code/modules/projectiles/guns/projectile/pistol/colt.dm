@@ -28,7 +28,7 @@
 		iconstring += "_gold"
 		itemstring += "_gold"
 
-	if (!ammo_magazine || !length(ammo_magazine.stored_ammo))
+	if (!ammo_magazine || !ammo_magazine.ammo_amount)
 		iconstring += "_slide"
 
 	icon_state = iconstring

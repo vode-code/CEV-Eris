@@ -65,7 +65,7 @@
 	update_icon()
 
 /obj/item/gun/projectile/automatic/lmg/on_update_icon()
-	icon_state = "[icon_base][cover_open ? "open" : "closed"][ammo_magazine ? round(ammo_magazine.stored_ammo.len, 25) : "-empty"]"
+	icon_state = "[icon_base][cover_open ? "open" : "closed"][ammo_magazine ? round(ammo_magazine.ammo_amount, 25) : "-empty"]"
 	set_item_state("-[cover_open ? "open" : null][ammo_magazine ?"mag":"nomag"]", hands = TRUE)
 	set_item_state("-[ammo_magazine ?"mag":"nomag"]", back = TRUE, onsuit = TRUE)
 	update_wear_icon()
@@ -93,7 +93,7 @@
 	spawn_blacklisted = FALSE
 
 /obj/item/gun/projectile/automatic/lmg/pk/on_update_icon()
-	icon_state = "[icon_base][cover_open ? "open" : "closed"][ammo_magazine ? round(ammo_magazine.stored_ammo.len, 25) : "-empty"]"
+	icon_state = "[icon_base][cover_open ? "open" : "closed"][ammo_magazine ? round(ammo_magazine.ammo_amount, 25) : "-empty"]"
 	set_item_state(ammo_magazine ? null : "-empty")
 	update_wear_icon()
 

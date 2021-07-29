@@ -64,8 +64,8 @@
 	if(bolt_open)
 		if(chambered)
 			to_chat(user, SPAN_NOTICE("You work the bolt open, ejecting [chambered]!"))
-			chambered.loc = get_turf(src)
-			loaded -= chambered
+			var/obj/item/ammo_casing/removed = removeCasing(chambered)
+			removed.forceMove(get_turf(src))
 			chambered = null
 		else
 			to_chat(user, SPAN_NOTICE("You work the bolt open."))

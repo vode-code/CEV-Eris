@@ -32,7 +32,7 @@
 
 	var/iconstring = initial(icon_state)
 
-	if (loaded.len)
+	if (ammo_amount)
 		iconstring += "_he"
 
 	add_overlays(iconstring)

@@ -22,7 +22,7 @@
 
 	if(!ammo_magazine)
 		icon_state = initial(icon_state)
-	else if(!ammo_magazine.stored_ammo.len)
+	else if(!ammo_magazine.ammo_amount)
 		icon_state = initial(icon_state) + "_empty"
 	else
 		icon_state = initial(icon_state) + "_full"
