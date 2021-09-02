@@ -28,7 +28,7 @@
 	if(!category || !(category in SScraft.cat_names))
 		return FALSE
 	SScraft.current_category[mob.ckey] = category
-	set_item(null, usr)
+	set_item(null, mob)
 	return TRUE
 
 /datum/nano_module/craft/proc/get_item(mob/mob)
@@ -38,18 +38,18 @@
 	SScraft.current_item[mob.ckey] = locate(item_ref)
 
 /datum/nano_module/craft/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, datum/topic_state/state = GLOB.default_state)
-	if(!usr)
+	if(!user)
 		return
-	if(usr.incapacitated())
+	if(user.incapacitated())
 		return
 
 	var/list/data = list()
-	var/curr_category = get_category(usr)
+	var/curr_category = get_category(user)
 
 	data["is_admin"] = check_rights(show_msg = FALSE)
 	data["categories"] = SScraft.cat_names
 	data["cur_category"] = curr_category
-	var/datum/craft_recipe/CR = get_item(usr)
+	var/datum/craft_recipe/CR = get_item(user)
 	data["cur_item"] = null
 
 	if(CR)

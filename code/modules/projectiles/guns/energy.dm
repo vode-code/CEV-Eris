@@ -147,13 +147,13 @@
 				return
 		if(saw_off && C.use_tool(user, src, WORKTIME_LONG, QUALITY_SAWING, FAILCHANCE_NORMAL, required_stat = STAT_MEC))
 			qdel(src)
-			new sawn(usr.loc)
+			new sawn(user.loc)
 			to_chat(user, SPAN_WARNING("You cut down the stock, barrel, and anything else nice from \the [src], ruining a perfectly good weapon."))
 	if(self_recharge)
-		to_chat(usr, SPAN_WARNING("[src] is a self-charging gun, it doesn't need more batteries."))
+		to_chat(user, SPAN_WARNING("[src] is a self-charging gun, it doesn't need more batteries."))
 		return
 	if(disposable)
-		to_chat(usr, SPAN_WARNING("[src] is a disposable gun, it doesn't need more batteries."))
+		to_chat(user, SPAN_WARNING("[src] is a disposable gun, it doesn't need more batteries."))
 		return
 
 	if(cell)

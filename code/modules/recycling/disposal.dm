@@ -58,7 +58,7 @@
 		visible_message(SPAN_NOTICE("[target] has been placed in the [src] by [user]."))
 		user.attack_log += text("\[[time_stamp()]\] <font color='red'>Has placed [target] ([target.ckey]) in disposals.</font>")
 		target.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been placed in disposals by [user.name] ([user.ckey])</font>")
-		msg_admin_attack("[user] ([user.ckey]) placed [target] ([target.ckey]) in a disposals unit. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[usr.x];Y=[usr.y];Z=[usr.z]'>JMP</a>)")
+		msg_admin_attack("[user] ([user.ckey]) placed [target] ([target.ckey]) in a disposals unit. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 		return TRUE
 
 /obj/machinery/disposal/MouseDrop_T(var/obj/item/I, mob/user, src_location, over_location, src_control, over_control, params)
@@ -161,15 +161,15 @@
 		src.add_fingerprint(user)
 		var/target_loc = target.loc
 		var/msg
-		for (var/mob/V in viewers(usr))
+		for (var/mob/V in viewers(user))
 			if(target == user && !user.stat && !user.weakened && !user.stunned && !user.paralysis)
-				V.show_message("[usr] starts climbing into the disposal.", 3)
+				V.show_message("[user] starts climbing into the disposal.", 3)
 			if(target != user && !user.restrained() && !user.stat && !user.weakened && !user.stunned && !user.paralysis)
 				if(target.anchored) return
-				V.show_message("[usr] starts stuffing [target.name] into the disposal.", 3)
+				V.show_message("[user] starts stuffing [target.name] into the disposal.", 3)
 
 		var/delay = 20
-		if(!do_after(usr, max(delay * usr.stats.getMult(STAT_VIG, STAT_LEVEL_EXPERT), delay * 0.66), src))
+		if(!do_after(user, max(delay * user.stats.getMult(STAT_VIG, STAT_LEVEL_EXPERT), delay * 0.66), src))
 			return
 		if(target_loc != target.loc)
 			return
@@ -258,7 +258,7 @@
 		return
 
 	if(user && user.loc == src)
-		to_chat(usr, "\red You cannot reach the controls from inside.")
+		to_chat(user, "\red You cannot reach the controls from inside.")
 		return
 
 	// Clumsy folks can only flush it.

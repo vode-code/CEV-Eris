@@ -31,7 +31,7 @@
 	set category = "Object"
 
 	chamber_offset = 0
-	visible_message(SPAN_WARNING("\The [usr] spins the cylinder of \the [src]!"), \
+	visible_message(SPAN_WARNING("\The [get_holding_mob()] spins the cylinder of \the [src]!"), \
 	SPAN_NOTICE("You hear something metallic spin and click."))
 	playsound(src.loc, 'sound/weapons/revolver_spin.ogg', 100, 1)
 	loaded = shuffle(loaded)

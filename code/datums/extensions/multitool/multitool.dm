@@ -8,12 +8,12 @@
 
 	var/html = get_interact_window(M, user)
 	if(html)
-		var/datum/browser/popup = new(usr, "multitool", "Multitool Menu", window_x, window_y)
+		var/datum/browser/popup = new(user, "multitool", "Multitool Menu", window_x, window_y)
 		popup.set_content(html)
 		popup.set_title_image(user.browse_rsc_icon(M.icon, M.icon_state))
 		popup.open()
 	else
-		close_window(usr)
+		close_window(user)
 
 /datum/extension/multitool/proc/get_interact_window(var/obj/item/tool/multitool/M, var/mob/user)
 	return
@@ -36,7 +36,7 @@
 
 /datum/extension/multitool/extension_act(href, href_list, var/mob/user)
 	if(..())
-		close_window(usr)
+		close_window(user)
 		return TRUE
 
 	var/obj/item/tool/multitool/M = user.get_multitool()

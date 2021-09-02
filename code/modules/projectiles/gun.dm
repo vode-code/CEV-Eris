@@ -260,9 +260,9 @@
 			return FALSE
 	return TRUE
 
-/obj/item/gun/proc/dna_check(user)
+/obj/item/gun/proc/dna_check(mob/user)
 	if(dna_compare_samples)
-		dna_user_sample = usr.real_name
+		dna_user_sample = user.real_name
 		if(dna_lock_sample != dna_user_sample)
 			return FALSE
 	return TRUE

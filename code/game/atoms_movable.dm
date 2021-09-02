@@ -158,8 +158,9 @@
 	src.thrower = thrower
 	src.throw_source = get_turf(src)	//store the origin turf
 
-	if(usr)
-		if(HULK in usr.mutations)
+	if(thrower && ismob(thrower))
+		var/mob/throwermob = thrower
+		if(HULK in throwermob.mutations)
 			src.throwing = 2 // really strong throw!
 
 	var/dist_x = abs(target.x - src.x)

@@ -112,7 +112,7 @@
 
 	while(bolt && tension && loc == current_user)
 		if(!do_after(user, draw_time, src)) //crossbow strings don't just magically pull back on their own.
-			user.visible_message("[usr] stops drawing and relaxes the string of [src].",SPAN_WARNING("You stop drawing back and relax the string of [src]."))
+			user.visible_message("[user] stops drawing and relaxes the string of [src].",SPAN_WARNING("You stop drawing back and relax the string of [src]."))
 			tension = 0
 			update_icon()
 			return
@@ -129,7 +129,7 @@
 			to_chat(user, "[src] gives a satisfying clunk as the string is pulled back as far as it can go!")
 			return
 
-		user.visible_message("[usr] draws back the string of [src]!",SPAN_NOTICE("You continue drawing back the string of [src]!"))
+		user.visible_message("[user] draws back the string of [src]!",SPAN_NOTICE("You continue drawing back the string of [src]!"))
 
 /obj/item/gun/launcher/crossbow/proc/increase_tension(mob/user)
 
@@ -166,7 +166,7 @@
 		else
 			to_chat(user, SPAN_NOTICE("[src] already has a cell installed."))
 
-	else if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING), src))
+	else if(I.get_tool_type(user, list(QUALITY_SCREW_DRIVING), src))
 		if(cell)
 			var/obj/item/C = cell
 			C.loc = get_turf(user)

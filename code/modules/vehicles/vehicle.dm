@@ -265,13 +265,13 @@
 	C.forceMove(src)
 	src.cell = C
 	powercheck()
-	to_chat(usr, SPAN_NOTICE("You install [C] in [src]."))
+	to_chat(H, SPAN_NOTICE("You install [C] in [src]."))
 
 /obj/vehicle/proc/remove_cell(var/mob/living/carbon/human/H)
 	if(!cell)
 		return
 
-	to_chat(usr, SPAN_NOTICE("You remove [cell] from [src]."))
+	to_chat(H, SPAN_NOTICE("You remove [cell] from [src]."))
 	cell.forceMove(get_turf(H))
 	H.put_in_hands(cell)
 	cell = null

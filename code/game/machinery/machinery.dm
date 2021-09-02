@@ -204,7 +204,7 @@ Class Procs:
 	if(user.lying || user.stat)
 		return 1
 	if(!user.IsAdvancedToolUser())
-		to_chat(usr, SPAN_WARNING("You don't have the dexterity to do this!"))
+		to_chat(user, SPAN_WARNING("You don't have the dexterity to do this!"))
 		return 1
 
 	if(ishuman(user))

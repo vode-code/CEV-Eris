@@ -121,14 +121,14 @@
 		new /obj/item/pipe(loc, make_from=src)
 		qdel(src)
 
-/obj/machinery/atmospherics/trinary/mixer/attack_hand(user as mob)
+/obj/machinery/atmospherics/trinary/mixer/attack_hand(mob/user as mob)
 	if(..())
 		return
-	src.add_fingerprint(usr)
+	src.add_fingerprint(user)
 	if(!src.allowed(user))
 		to_chat(user, SPAN_WARNING("Access denied."))
 		return
-	usr.set_machine(src)
+	user.set_machine(src)
 	var/dat = {"<b>Power: </b><a href='?src=\ref[src];power=1'>[use_power?"On":"Off"]</a><br>
 				<b>Set Flow Rate Limit: </b>
 				[set_flow_rate]L/s | <a href='?src=\ref[src];set_press=1'>Change</a>

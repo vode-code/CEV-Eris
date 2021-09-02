@@ -403,7 +403,7 @@
 	return
 
 /obj/machinery/power/solar_control/attackby(obj/item/I, mob/user)
-	if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING), src))
+	if(I.get_tool_type(user, list(QUALITY_SCREW_DRIVING), src))
 		if(I.use_tool(user, src, WORKTIME_FAST, QUALITY_SCREW_DRIVING, FAILCHANCE_NORMAL, required_stat = STAT_MEC))
 			if (src.stat & BROKEN)
 				to_chat(user, SPAN_NOTICE("The broken glass falls out."))

@@ -45,9 +45,9 @@
 	else if(istype(W, /obj/item/pen))
 		switch(alert("What would you like to alter?",,"Title","Description", "Cancel"))
 			if("Title")
-				var/str = sanitizeSafe(input(usr,"Label text?","Set label",""), MAX_NAME_LEN)
+				var/str = sanitizeSafe(input(user,"Label text?","Set label",""), MAX_NAME_LEN)
 				if(!str || !length(str))
-					to_chat(usr, SPAN_WARNING(" Invalid text."))
+					to_chat(user, SPAN_WARNING(" Invalid text."))
 					return
 				user.visible_message("\The [user] titles \the [src] with \a [W], marking down: \"[str]\"",\
 				"<span class='notice'>You title \the [src]: \"[str]\"</span>",\
@@ -60,9 +60,9 @@
 				else
 					nameset = 1
 			if("Description")
-				var/str = sanitize(input(usr,"Label text?","Set label",""))
+				var/str = sanitize(input(user,"Label text?","Set label",""))
 				if(!str || !length(str))
-					to_chat(usr, "\red Invalid text.")
+					to_chat(user, "\red Invalid text.")
 					return
 				if(!examtext && !nameset)
 					examtext = str
@@ -155,9 +155,9 @@
 	else if(istype(W, /obj/item/pen))
 		switch(alert("What would you like to alter?",,"Title","Description", "Cancel"))
 			if("Title")
-				var/str = sanitizeSafe(input(usr,"Label text?","Set label",""), MAX_NAME_LEN)
+				var/str = sanitizeSafe(input(user,"Label text?","Set label",""), MAX_NAME_LEN)
 				if(!str || !length(str))
-					to_chat(usr, SPAN_WARNING(" Invalid text."))
+					to_chat(user, SPAN_WARNING(" Invalid text."))
 					return
 				user.visible_message("\The [user] titles \the [src] with \a [W], marking down: \"[str]\"",\
 				"<span class='notice'>You title \the [src]: \"[str]\"</span>",\
@@ -171,9 +171,9 @@
 					nameset = 1
 
 			if("Description")
-				var/str = sanitize(input(usr,"Label text?","Set label",""))
+				var/str = sanitize(input(user,"Label text?","Set label",""))
 				if(!str || !length(str))
-					to_chat(usr, "\red Invalid text.")
+					to_chat(user, "\red Invalid text.")
 					return
 				if(!examtext && !nameset)
 					examtext = str
@@ -270,9 +270,9 @@
 			if(i > 5)
 				P.icon_state = "deliverycrate5"
 				P.name = "huge parcel"
-			P.add_fingerprint(usr)
-			O.add_fingerprint(usr)
-			src.add_fingerprint(usr)
+			P.add_fingerprint(user)
+			O.add_fingerprint(user)
+			src.add_fingerprint(user)
 			src.amount -= 1
 			user.visible_message("\The [user] wraps \a [target] with \a [src].",\
 			SPAN_NOTICE("You wrap \the [target], leaving [amount] units of paper on \the [src]."),\

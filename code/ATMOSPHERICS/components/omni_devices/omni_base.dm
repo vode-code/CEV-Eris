@@ -104,7 +104,7 @@
 	if(..())
 		return
 
-	src.add_fingerprint(usr)
+	src.add_fingerprint(user)
 	ui_interact(user)
 	return
 

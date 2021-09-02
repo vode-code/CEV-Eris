@@ -303,7 +303,7 @@
 			return
 		if(saw_off && A.use_tool(user, src, WORKTIME_LONG, QUALITY_SAWING, FAILCHANCE_NORMAL, required_stat = STAT_MEC))
 			qdel(src)
-			new sawn(usr.loc)
+			new sawn(user.loc)
 			to_chat(user, SPAN_WARNING("You cut down the stock, barrel, and anything else nice from \the [src], ruining a perfectly good weapon."))
 	if (!.) //Parent returns true if attackby is handled
 		load_ammo(A, user)

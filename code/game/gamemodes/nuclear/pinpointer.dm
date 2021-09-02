@@ -31,7 +31,7 @@
 
 /obj/item/pinpointer/attackby(obj/item/I, mob/user, params)
 	if (!slot && istype(I, /obj/item/disk/nuclear))
-		usr.drop_item()
+		user.drop_item()
 		I.loc = src
 		src.slot = I
 		update_icon()

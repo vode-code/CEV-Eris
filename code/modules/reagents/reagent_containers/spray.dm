@@ -57,7 +57,7 @@
 
 /obj/item/reagent_containers/spray/proc/Spray_at(atom/A as mob|obj, mob/user as mob, proximity)
 	if (A.density && proximity)
-		A.visible_message("[usr] sprays [A] with [src].")
+		A.visible_message("[user] sprays [A] with [src].")
 		reagents.splash(A, amount_per_transfer_from_this)
 	else
 		spawn(0)
@@ -127,11 +127,11 @@
 
 /obj/item/reagent_containers/spray/pepper/attack_self(var/mob/user)
 	safety = !safety
-	to_chat(usr, "<span class = 'notice'>You switch the safety [safety ? "on" : "off"].</span>")
+	to_chat(user, "<span class = 'notice'>You switch the safety [safety ? "on" : "off"].</span>")
 
-/obj/item/reagent_containers/spray/pepper/Spray_at(atom/A as mob|obj)
+/obj/item/reagent_containers/spray/pepper/Spray_at(atom/A as mob|obj, mob/user as mob)
 	if(safety)
-		to_chat(usr, "<span class = 'warning'>The safety is on!</span>")
+		to_chat(user, "<span class = 'warning'>The safety is on!</span>")
 		return
 	..()
 

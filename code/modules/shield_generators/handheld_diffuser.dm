@@ -46,9 +46,9 @@
 	if(cell_check(active_power_use, user))
 		START_PROCESSING(SSobj, src)
 		enabled = TRUE
-		to_chat(usr, "\the [src] clicks [enabled ? "on" : "off"].")
+		to_chat(user, "\the [src] clicks [enabled ? "on" : "off"].")
 	else
-		to_chat(usr, "\the [src] clicks uselessly.")
+		to_chat(user, "\the [src] clicks uselessly.")
 	playsound(loc, 'sound/machines/button.ogg', 50, 1)
 
 
@@ -58,7 +58,7 @@
 	to_chat(user, "\the [src] clicks [enabled ? "on" : "off"].")
 	playsound(loc, 'sound/machines/button.ogg', 50, 1)
 
-/obj/item/device/shield_diffuser/examine()
+/obj/item/device/shield_diffuser/examine(mob/user)
 	. = ..()
-	to_chat(usr, "It is [enabled ? "enabled" : "disabled"].")
-	to_chat(usr, "It has enough charge for [cell ? round(cell.charge / active_power_use) : 0] more uses.")
+	to_chat(user, "It is [enabled ? "enabled" : "disabled"].")
+	to_chat(user, "It has enough charge for [cell ? round(cell.charge / active_power_use) : 0] more uses.")

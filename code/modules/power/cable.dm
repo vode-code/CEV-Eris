@@ -247,7 +247,7 @@ var/list/possible_cable_coil_colours = list(
 				if(c.d1 == UP || c.d2 == UP)
 					qdel(c)
 
-	investigate_log("was cut by [key_name(usr, usr.client)] in [user.loc.loc]","wires")
+	investigate_log("was cut by [key_name(user, user.client)] in [user.loc.loc]","wires")
 
 	qdel(src)
 	return
@@ -260,7 +260,7 @@ var/list/possible_cable_coil_colours = list(
 		var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 		s.set_up(5, 1, src)
 		s.start()
-		if(usr.stunned)
+		if(user.stunned)
 			return 1
 	return 0
 

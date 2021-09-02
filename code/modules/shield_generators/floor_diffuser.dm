@@ -40,7 +40,7 @@
 		diffuse(loc)
 		for (var/d in GLOB.cardinal)
 			diffuse(get_step(src, d))
-		
+
 
 /obj/machinery/shield_diffuser/proc/diffuse(var/turf/T)
 	if (!T)
@@ -52,7 +52,7 @@
 
 	var/obj/effect/shield/shield = locate(/obj/effect/shield) in T
 	if(shield) shield.fail(SSmachines.wait)
-	
+
 
 /obj/machinery/shield_diffuser/Process()
 	if(alarm)
@@ -95,16 +95,16 @@
 	else
 		SetIconState("fdiffuser_on")
 
-/obj/machinery/shield_diffuser/attack_hand()
+/obj/machinery/shield_diffuser/attack_hand(mob/user)
 	if(alarm)
-		to_chat(usr, "You press an override button on \the [src], re-enabling it.")
+		to_chat(user, "You press an override button on \the [src], re-enabling it.")
 		alarm = 0
 		update_icon()
 		return
 	enabled = !enabled
 	update_turfs()
 	update_icon()
-	to_chat(usr, "You turn \the [src] [enabled ? "on" : "off"].")
+	to_chat(user, "You turn \the [src] [enabled ? "on" : "off"].")
 
 /obj/machinery/shield_diffuser/proc/meteor_alarm(var/duration)
 	if(!duration)

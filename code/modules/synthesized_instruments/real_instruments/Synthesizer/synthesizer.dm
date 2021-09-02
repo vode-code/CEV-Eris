@@ -16,7 +16,7 @@
 	if (istype(O, /obj/item/tool/wrench))
 		if (!anchored && !isinspace())
 			playsound(src.loc, 'sound/items/Ratchet.ogg', 50, 1)
-			to_chat(usr, "<span class='notice'> You begin to tighten \the [src] to the floor...</span>")
+			to_chat(user, "<span class='notice'> You begin to tighten \the [src] to the floor...</span>")
 			if (do_after(user, 20))
 				if(!anchored && !isinspace())
 					user.visible_message( \
@@ -26,7 +26,7 @@
 					src.anchored = TRUE
 		else if(anchored)
 			playsound(src.loc, 'sound/items/Ratchet.ogg', 50, 1)
-			to_chat(usr, "<span class='notice'> You begin to loosen \the [src]'s casters...</span>")
+			to_chat(user, "<span class='notice'> You begin to loosen \the [src]'s casters...</span>")
 			if (do_after(user, 40))
 				if(anchored)
 					user.visible_message( \

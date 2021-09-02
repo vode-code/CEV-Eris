@@ -85,7 +85,7 @@
 		return ..()
 
 /obj/item/ammo_casing/attackby(obj/item/I, mob/user)
-	if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING, QUALITY_CUTTING), src))
+	if(I.get_tool_type(user, list(QUALITY_SCREW_DRIVING, QUALITY_CUTTING), src))
 		if(!BB)
 			to_chat(user, SPAN_NOTICE("There is no bullet in the casing to inscribe anything into."))
 			return
@@ -262,7 +262,7 @@
 				return
 			gun_to_load.load_ammo(src, user)
 			to_chat(user, SPAN_NOTICE("It takes a bit of time for you to reload your [W] with [src] using only one hand!"))
-			visible_message("[user] tactically reloads [W] using only one hand!")	
+			visible_message("[user] tactically reloads [W] using only one hand!")
 
 /obj/item/ammo_magazine/attack_hand(mob/user)
 	if(user.get_inactive_hand() == src && stored_ammo.len)

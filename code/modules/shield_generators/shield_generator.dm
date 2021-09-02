@@ -789,10 +789,10 @@
 
 /obj/machinery/power/shield_generator/wrench(user, obj/item/I)
 	if(running != SHIELD_OFF)
-		to_chat(usr, SPAN_NOTICE("Generator has to be toggled off first!"))
+		to_chat(user, SPAN_NOTICE("Generator has to be toggled off first!"))
 		return
 	if(tendrils_deployed)
-		to_chat(usr, SPAN_NOTICE("Retract conduits first!"))
+		to_chat(user, SPAN_NOTICE("Retract conduits first!"))
 		return
 	if(I.use_tool(user, src, WORKTIME_FAST, QUALITY_BOLT_TURNING, FAILCHANCE_EASY,  required_stat = STAT_MEC))
 		playsound(src.loc, 'sound/items/Ratchet.ogg', 75, 1)

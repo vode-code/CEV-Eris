@@ -274,12 +274,12 @@
 					return
 			if(I.use_tool(user, src, WORKTIME_NORMAL, tool_type, FAILCHANCE_EASY, required_stat = STAT_MEC))
 				building_terminal = 1
-				if (prob(50) && electrocute_mob(usr, terminal.powernet, terminal))
+				if (prob(50) && electrocute_mob(user, terminal.powernet, terminal))
 					var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 					s.set_up(5, 1, src)
 					s.start()
 					building_terminal = 0
-					if(usr.stunned)
+					if(user.stunned)
 						return
 				new /obj/item/stack/cable_coil(loc,10)
 				user.visible_message(\

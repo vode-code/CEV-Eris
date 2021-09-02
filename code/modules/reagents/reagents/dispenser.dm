@@ -15,14 +15,14 @@
 	if(istype(O, /obj/item/paper))
 		var/obj/item/paper/paperaffected = O
 		paperaffected.clearpaper()
-		to_chat(usr, "The solution dissolves the ink on the paper.")
+		O.visible_message("The solution dissolves the ink on the paper.")
 		return
 	if(istype(O, /obj/item/book))
 		if(volume < 5)
 			return
 		var/obj/item/book/affectedbook = O
 		affectedbook.dat = null
-		to_chat(usr, "<span class='notice'>The solution dissolves the ink on the book.</span>")
+		O.visible_message("<span class='notice'>The solution dissolves the ink on the book.</span>")
 	return
 
 /datum/reagent/metal
@@ -179,14 +179,14 @@
 	if(istype(O, /obj/item/paper))
 		var/obj/item/paper/paperaffected = O
 		paperaffected.clearpaper()
-		to_chat(usr, "The solution dissolves the ink on the paper.")
+		O.visible_message("The solution dissolves the ink on the paper.")
 		return
 	if(istype(O, /obj/item/book))
 		if(volume < 5)
 			return
 		var/obj/item/book/affectedbook = O
 		affectedbook.dat = null
-		to_chat(usr, "<span class='notice'>The solution dissolves the ink on the book.</span>")
+		O.visible_message("<span class='notice'>The solution dissolves the ink on the book.</span>")
 	return
 
 /datum/reagent/toxin/hydrazine
@@ -445,7 +445,7 @@
 			L.take_damage(1, 0)
 	if(prob(5))
 		M.emote(pick("twitch", "blink_r", "shiver"))
-	
+
 /datum/reagent/sulfur
 	name = "Sulfur"
 	id = "sulfur"

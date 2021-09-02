@@ -697,7 +697,7 @@
 		var/obj/item/pen/crayon/C = W
 		var/clr = C.colourName
 		if(!(clr in list("blue","green","mime","orange","purple","rainbow","red","yellow")))
-			to_chat(usr, SPAN_NOTICE("The egg refuses to take on this color!"))
+			to_chat(user, SPAN_NOTICE("The egg refuses to take on this color!"))
 			return
 		to_chat(user, SPAN_NOTICE("You color \the [src] [clr]"))
 		icon_state = "egg-[clr]"
@@ -1375,9 +1375,9 @@
 	New()
 		..()
 		unpopped = rand(1,10)
-	On_Consume()
+	On_Consume(mob/eater)
 		if(prob(unpopped))	//lol ...what's the point?
-			to_chat(usr, SPAN_WARNING("You bite down on an un-popped kernel!"))
+			to_chat(eater, SPAN_WARNING("You bite down on an un-popped kernel!"))
 			unpopped = max(0, unpopped-1)
 		..()
 

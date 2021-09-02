@@ -86,15 +86,15 @@
 // Proc: attack_ai()
 // Parameters: None
 // Description: AI requires the RCON wire to be intact to operate the SMES.
-/obj/machinery/power/smes/buildable/attack_ai()
+/obj/machinery/power/smes/buildable/attack_ai(mob/user as mob)
 	if(RCon)
 		..()
 	else // RCON wire cut
-		to_chat(usr, SPAN_WARNING("Connection error: Destination Unreachable."))
+		to_chat(user, SPAN_WARNING("Connection error: Destination Unreachable."))
 
 	// Cyborgs standing next to the SMES can play with the wiring.
-	if(isrobot(usr) && Adjacent(usr) && open_hatch)
-		wires.Interact(usr)
+	if(isrobot(user) && Adjacent(user) && open_hatch)
+		wires.Interact(user)
 
 // Proc: New()
 // Parameters: None
@@ -106,10 +106,10 @@
 // Proc: attack_hand()
 // Parameters: None
 // Description: Opens the UI as usual, and if cover is removed opens the wiring panel.
-/obj/machinery/power/smes/buildable/attack_hand()
+/obj/machinery/power/smes/buildable/attack_hand(mob/user)
 	..()
 	if(open_hatch)
-		wires.Interact(usr)
+		wires.Interact(user)
 
 // Proc: RefreshParts()
 // Parameters: None
@@ -161,8 +161,8 @@
 		var/obj/item/clothing/gloves/G = h_user.gloves
 		if(G.siemens_coefficient == 0)
 			user_protected = 1
-	log_game("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100")
-	message_admins("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100 - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>")
+	log_game("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [user.ckey], Intensity: [intensity]/100")
+	message_admins("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [user.ckey], Intensity: [intensity]/100 - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>")
 
 
 	switch (intensity)
@@ -321,13 +321,13 @@
 
 			playsound(get_turf(src), 'sound/items/Crowbar.ogg', 50, 1)
 			to_chat(user, SPAN_WARNING("You begin to disassemble the [src]!"))
-			if (do_after(usr, 100 * cur_coils, src)) // More coils = takes longer to disassemble. It's complex so largest one with 5 coils will take 50s
+			if (do_after(user, 100 * cur_coils, src)) // More coils = takes longer to disassemble. It's complex so largest one with 5 coils will take 50s
 
 				if (failure_probability && prob(failure_probability))
 					total_system_failure(failure_probability, user)
 					return
 
-				to_chat(usr, SPAN_WARNING("You have disassembled the SMES cell!"))
+				to_chat(user, SPAN_WARNING("You have disassembled the SMES cell!"))
 				var/obj/machinery/constructable_frame/machine_frame/M = new /obj/machinery/constructable_frame/machine_frame(src.loc)
 				M.state = 2
 				M.icon_state = "box_1"
@@ -345,13 +345,13 @@
 					total_system_failure(failure_probability, user)
 					return
 
-				to_chat(usr, SPAN_NOTICE("You install the coil into the SMES unit."))
+				to_chat(user, SPAN_NOTICE("You install the coil into the SMES unit."))
 				user.drop_item()
 				component_parts += W
 				W.loc = src
 				RefreshParts()
 			else
-				to_chat(usr, SPAN_WARNING("You can't insert more coils to this SMES unit!"))
+				to_chat(user, SPAN_WARNING("You can't insert more coils to this SMES unit!"))
 
 // SMESes that power ship sections
 // Output enabled,  partially charged
