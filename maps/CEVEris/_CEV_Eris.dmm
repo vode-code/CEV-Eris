@@ -104321,6 +104321,15 @@
 	},
 /turf/simulated/floor/tiled/steel/monofloor,
 /area/eris/quartermaster/hangarsupply)
+"rqc" = (
+/obj/machinery/telecomms/server/presets/entertainment,
+/turf/simulated/floor/bluegrid{
+	name = "Server Base";
+	nitrogen = 180;
+	oxygen = 0;
+	temperature = 200
+	},
+/area/eris/command/tcommsat/chamber)
 "rtb" = (
 /obj/structure/catwalk,
 /obj/structure/disposalpipe/segment{
@@ -202799,7 +202808,7 @@ bFn
 bFr
 bFC
 bFF
-bEX
+rqc
 bFP
 bEX
 bFY

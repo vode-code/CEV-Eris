@@ -220,6 +220,12 @@
 	item_state = "headset"
 	ks2type = /obj/item/device/encryptionkey/headset_church
 
+/obj/item/device/radio/headset/entertainment
+	name = "entertainment headset"
+	desc = "When you hold this to your ear, you can hear the echo of a cheer."
+	icon_state = "ent_headset"
+	ks2type = /obj/item/device/encryptionkey/entertainment
+
 /obj/item/device/radio/headset/attackby(obj/item/W, mob/user)
 //	..()
 	user.set_machine(src)

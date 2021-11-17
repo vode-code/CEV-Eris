@@ -316,3 +316,8 @@
 	if(holder)
 		holder.verbs -= codespeak_procs
 	..()
+
+/datum/perk/clown
+	name = "Master Prankster"
+	desc = "You're a born prankster and can lighten the atmosphere up wherever you go with an array of jokes and tricks. Additionally, you have the ability to judge the psyche of your audience at a glance."
+	icon_state = "juggle" // https://game-icons.net/1x1/lorc/juggler.html

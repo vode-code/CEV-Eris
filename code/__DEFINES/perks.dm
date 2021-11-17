@@ -49,3 +49,4 @@
 #define PERK_CODESPEAK /datum/perk/codespeak
 #define PERK_TECHNOMANCER /datum/perk/inspiration
 #define PERK_CLUB /datum/perk/job/club
+#define PERK_CLOWN /datum/perk/clown

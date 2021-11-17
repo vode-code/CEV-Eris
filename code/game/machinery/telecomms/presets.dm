@@ -41,7 +41,7 @@
 	network = "eris"
 	autolinkers = list("hub", "relay", "c_relay", "s_relay", "m_relay", "r_relay", "science", "medical",
 	"supply", "service", "common", "command", "engineering", "security", "nt", "unused",
-	"receiverA", "broadcasterA")
+	"receiverA", "broadcasterA", "entertainment")
 
 /obj/machinery/telecomms/hub/preset_cent
 	id = "CentCom Hub"
@@ -56,7 +56,7 @@
 	id = "Receiver A"
 	network = "eris"
 	autolinkers = list("receiverA") // link to relay
-	freq_listening = list(AI_FREQ, SCI_FREQ, MED_FREQ, NT_FREQ, SUP_FREQ, SRV_FREQ, COMM_FREQ, ENG_FREQ, SEC_FREQ)
+	freq_listening = list(AI_FREQ, SCI_FREQ, MED_FREQ, NT_FREQ, SUP_FREQ, SRV_FREQ, COMM_FREQ, ENG_FREQ, SEC_FREQ, ENT_FREQ)
 
 	//Common and other radio frequencies for people to freely use
 	New()
@@ -102,8 +102,8 @@
 /obj/machinery/telecomms/bus/preset_four
 	id = "Bus 4"
 	network = "eris"
-	freq_listening = list(ENG_FREQ, AI_FREQ, PUB_FREQ)
-	autolinkers = list("processor4", "engineering", "common")
+	freq_listening = list(ENG_FREQ, AI_FREQ, PUB_FREQ, ENT_FREQ)
+	autolinkers = list("processor4", "engineering", "common", "entertainment")
 
 /obj/machinery/telecomms/bus/preset_cent
 	id = "CentCom Bus"
@@ -165,6 +165,11 @@
 	id = "Service Server"
 	freq_listening = list(SRV_FREQ)
 	autolinkers = list("service")
+
+/obj/machinery/telecomms/server/presets/entertainment
+	id = "Entertainment Server"
+	freq_listening = list(ENT_FREQ)
+	autolinkers = list("entertainment")
 
 /obj/machinery/telecomms/server/presets/common
 	id = "Common Server"

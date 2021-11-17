@@ -45,23 +45,4 @@
 	head = /obj/item/clothing/head/beret/artist
 	glasses = /obj/item/clothing/glasses/artist
 	mask = /obj/item/clothing/mask/gas/artist_hat
-	l_pocket = /obj/item/bikehorn
-	backpack_contents = list(/obj/item/bananapeel = 1, /obj/item/storage/fancy/crayons = 1, /obj/item/toy/waterflower = 1, /obj/item/stamp/clown = 1, /obj/item/handcuffs/fake = 1)
-
-/decl/hierarchy/outfit/job/cargo/artist/clown
-	name = OUTFIT_JOB_NAME("Guild Clown")
-	uniform = /obj/item/clothing/under/rank/clown
-	shoes = /obj/item/clothing/shoes/clown_shoes
-	mask = /obj/item/clothing/mask/gas/clown_hat
-	l_pocket = /obj/item/bikehorn
-	backpack_contents = list(/obj/item/bananapeel = 1, /obj/item/storage/fancy/crayons = 1, /obj/item/toy/waterflower = 1, /obj/item/stamp/clown = 1, /obj/item/handcuffs/fake = 1)
-
-/decl/hierarchy/outfit/job/cargo/artist/clown/New()
-	..()
-	backpack_overrides[/decl/backpack_outfit/backpack] = /obj/item/storage/backpack/clown
-	backpack_overrides[/decl/backpack_outfit/satchel] = /obj/item/storage/backpack/satchel/leather
-
-
-/decl/hierarchy/outfit/job/cargo/artist/clown/post_equip(var/mob/living/carbon/human/H)
-	..()
-	H.mutations.Add(CLUMSY)
+	backpack_contents = list(/obj/item/storage/fancy/crayons = 1)

@@ -129,6 +129,17 @@
 /obj/item/modular_computer/pda/club_worker
 	icon_state = "pda-club"
 
+/obj/item/modular_computer/pda/clown
+	icon_state = "pda-clown"
+
+/obj/item/modular_computer/pda/clown/Crossed(AM as mob|obj) //Clown PDA is slippery.
+	if (isliving(AM))
+		var/mob/living/M = AM
+		if((locate(/obj/structure/multiz/stairs) in get_turf(loc)) || (locate(/obj/structure/multiz/ladder) in get_turf(loc)))
+			visible_message(SPAN_DANGER("\The [M] carefully avoids stepping down on \the [src]."))
+			return
+		M.slip()
+
 /obj/item/modular_computer/pda/club_worker/install_default_programs()
 	..()
 	hard_drive.store_file(new /datum/computer_file/program/drink_catalog())

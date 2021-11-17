@@ -118,6 +118,7 @@ var/const/MED_FREQ = 1355
 var/const/SCI_FREQ = 1351
 var/const/SRV_FREQ = 1349
 var/const/SUP_FREQ = 1347
+var/const/ENT_FREQ = 1234
 
 
 // internal department channels
@@ -138,7 +139,8 @@ var/list/radiochannels = list(
 	"Service" 		= SRV_FREQ,
 	"AI Private"	= AI_FREQ,
 	"Medical(I)"	= MED_I_FREQ,
-	"Security(I)"	= SEC_I_FREQ
+	"Security(I)"	= SEC_I_FREQ,
+	"Entertainment" = ENT_FREQ
 )
 
 // central command channels, i.e deathsquid
@@ -181,6 +183,8 @@ var/list/DEPT_FREQS = list(AI_FREQ, COMM_FREQ, ENG_FREQ, MED_FREQ, NT_FREQ, SEC_
 		return "srvradio"
 	if(frequency == NT_FREQ)
 		return "ntradio"
+	if(frequency == ENT_FREQ)
+		return "entradio"
 	if(frequency in DEPT_FREQS)
 		return "deptradio"
 

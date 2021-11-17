@@ -5,6 +5,7 @@ GLOBAL_LIST_INIT(department_engineering, list(DEPARTMENT_ENGINEERING))
 GLOBAL_LIST_INIT(department_guild, list(DEPARTMENT_GUILD))
 GLOBAL_LIST_INIT(department_church, list(DEPARTMENT_CHURCH))
 GLOBAL_LIST_INIT(department_civilian, list(DEPARTMENT_CIVILIAN))
+GLOBAL_LIST_INIT(department_entertainment, list(DEPARTMENT_ENTERTAINMENT))
 
 var/const/ENGINEERING       =(1<<0)
 var/const/IRONHAMMER        =(1<<1)
@@ -16,6 +17,7 @@ var/const/MISC              =(1<<6)
 var/const/SERVICE           =(1<<7)
 var/const/GUILD             =(1<<8)
 var/const/CHURCH           	=(1<<9)
+var/const/ENTERTAINMENT		=(1<<10)
 
 var/const/ENGSEC			=(1<<0)
 
@@ -58,6 +60,8 @@ var/const/ACOLYTE			=(1<<1)
 var/const/JANITOR			=(1<<2)
 var/const/BOTANIST			=(1<<3)
 
+var/const/CLOWN				=(1<<0)
+
 
 var/list/assistant_occupations = list()
 
@@ -90,6 +94,8 @@ var/list/security_positions = list(JOBS_SECURITY)
 
 
 var/list/nonhuman_positions = list(JOBS_NONHUMAN)
+
+var/list/entertainment_positions = list(JOBS_ENTERTAINMENT)
 
 
 /proc/guest_jobbans(var/job)

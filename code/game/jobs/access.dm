@@ -168,6 +168,8 @@
 			return "NeoTheology"
 		if(ACCESS_REGION_CLUB) //service
 			return "Club"
+		if(ACCESS_REGION_ENTERTAINMENT)
+			return "Entertainment"
 
 /proc/get_access_desc(id)
 	var/list/AS = get_all_access_datums_by_id()

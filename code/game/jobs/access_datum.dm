@@ -445,6 +445,15 @@
 	desc = "NeoTheology Inquisitor"
 	region = ACCESS_REGION_CHURCH
 
+// /var/const/free_access_id = 76
+
+// entertainment
+/var/const/access_clown_shuttle = 77
+/datum/access/clown_shuttle
+	id = access_clown_shuttle
+	desc = "Clown Shuttle"
+	region = ACCESS_REGION_ENTERTAINMENT
+
 /****************
 * Access Change *
 *****************/

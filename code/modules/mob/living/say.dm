@@ -15,6 +15,7 @@ var/list/department_radio_keys = list(
 	"v" = "Service",     "V" = "Service",
 	"p" = "AI Private",  "P" = "AI Private",
 	"t" = "NT Voice",    "T" = "NT Voice",
+	"f" = "Entertainment", "F" = "Entertainment",
 
 	"к" = "right ear",   "К" = "right ear",
 	"д" = "left ear",    "Д" = "left ear",

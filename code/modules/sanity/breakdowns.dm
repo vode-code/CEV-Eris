@@ -82,6 +82,7 @@
 		"You have become iron willed.",
 		"Nothing phases you anymore."
 	)
+	active_message = "is in a state of absolute concentration."
 
 /datum/breakdown/positive/concentration/New()
 	..()
@@ -112,6 +113,7 @@
 	end_messages = list(
 		"The last drop of adrenaline leaves your veins. You feel like a normal human now."
 	)
+	active_message = "is ignoring the pains of life."
 
 /datum/breakdown/positive/determination/occur()
 	++holder.owner.shock_resist
@@ -159,6 +161,7 @@
 	end_messages = list(
 		"You feel the panic subside. Perhaps it's alright to live, after all?"
 	)
+	active_message = "is looking suicidal."
 
 /datum/breakdown/negative/selfharm/update()
 	. = ..()
@@ -228,6 +231,7 @@
 	end_messages = list(
 		"You calm down as your feelings subside. You feel horribly embarrassed!"
 	)
+	active_message = "is looking overwhelmed."
 
 /datum/breakdown/negative/hysteric/update()
 	. = ..()
@@ -271,6 +275,7 @@
 	end_messages = list(
 		"You feel silence, again."
 	)
+	active_message = "is reacting to sounds unheard."
 
 /datum/breakdown/negative/delusion/update()
 	. = ..()
@@ -301,6 +306,7 @@
 	end_messages = list(
 		"You feel like it is gone. But will it return?"
 	)
+	active_message = "has eyes full of symbols."
 
 /datum/breakdown/negative/fabric/occur()
 	RegisterSignal(SSdcs, COMSIG_GLOB_FABRIC_NEW, .proc/add_image)
@@ -402,6 +408,7 @@
 	var/mob/living/carbon/human/target
 	start_messages = list("You start to see through everything. Your mind expands.")
 	end_messages = list("The world has returned to normal ... right?")
+	active_message = "gazes through everything."
 
 /datum/breakdown/negative/glassification/can_occur()
 	var/list/candidates = (GLOB.player_list & GLOB.living_mob_list & GLOB.human_mob_list) - holder.owner
@@ -453,6 +460,7 @@
 	end_messages = list("You feel like you've forgotten something important. But this comforts you.")
 	var/message_time = 0
 	var/cooldown_message = 10 SECONDS
+	active_message = "is releasing forbidden knowledge."
 
 
 /datum/breakdown/common/herald/update()
@@ -473,6 +481,8 @@
 
 
 /datum/breakdown/common/desire_for_chrome/can_occur()
+	if (is_neotheology_disciple(holder.owner))
+		return FALSE
 	for(var/obj/item/organ/external/Ex in holder.owner.organs)
 		if(!BP_IS_ROBOTIC(Ex))
 			return TRUE
@@ -572,7 +582,7 @@
 	var/list/candidates = (GLOB.player_list & GLOB.living_mob_list & GLOB.human_mob_list) - holder.owner
 	if(candidates.len)
 		target = pick(candidates)
-		start_messages = list("[target.name] knows the way out. [target.name] is hiding something. [target.name] is the key! [target.name] is yours!")
+		start_messages = list("[target.name] knows the way out.","[target.name] is hiding something.","[target.name] is the key!","[target.name] is yours!")
 		return TRUE
 	return FALSE
 
@@ -634,6 +644,7 @@
 	end_messages = list(
 		"You feel easier about not stealing things now."
 	)
+	active_message = "has very grabby hands."
 
 /datum/breakdown/common/kleptomania/update()
 	. = ..()

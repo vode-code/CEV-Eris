@@ -129,3 +129,9 @@
 	name = "Offship entities"
 	id = DEPARTMENT_OFFSHIP
 	account_budget = 0
+
+/datum/department/entertainment
+	name = "The Circus"
+	id = DEPARTMENT_ENTERTAINMENT
+	account_initial_balance = 1800
+	funding_type = FUNDING_NONE // funding is only obtained as a reward for pranks, no passive funding

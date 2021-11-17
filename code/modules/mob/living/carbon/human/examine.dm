@@ -331,6 +331,31 @@
 	if(digitalcamo)
 		msg += "[T.He] [T.is] repulsively uncanny!\n"
 
+	if (user.stats.getPerk(PERK_CLOWN))
+		var/datum/perk/userperk = user.stats.getPerk(PERK_CLOWN)
+		//TODO: add breakdown notifs
+		if (sanity && sanity.max_level > 0)
+			var/sanitylevel = sanity.level/sanity.max_level * 100
+			switch(sanitylevel)
+				if (0 to 10) //"<span class='warning'>[T.He] has gone completely coocoo!</span>\n"
+					msg += "<span class='warning'><IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] has gone completely coocoo!</span>\n"
+				if (10 to 30) //"<span class='warning'>[T.He] is madder than a hatter!</span>\n"
+					msg += "<span class='warning'><IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] is madder than a hatter!</span>\n"
+				if (30 to 50) //"[T.He] is looking loopy.</span>\n"
+					msg += "<IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] is looking loopy.\n"
+				if (50 to 70) //"[T.He] appears to be perfectly balanced. As all things should be.</span>\n"
+					msg += "<IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] appears to be perfectly balanced. As all things should be.\n"
+				if (70 to 90) //"<span class='notice'>[T.He] is honky-dory!</span>\n"
+					msg += "<span class='notice'><IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] is honky-dory!</span>\n"
+				if (90 to 100) //"<span class='notice'>[T.He] is supercalifragilisticexpialidocious!</span>\n"
+					msg += "<span class='notice'> <IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] is supercalifragilisticexpialidocious!</span>\n"
+			for (var/datum/breakdown/breakdown in sanity.breakdowns)
+				if (breakdown.active_message)
+					msg += "<span class='warning'> <IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] [breakdown.active_message]</span>\n"
+
+		else
+			msg += "<span class='danger'><IMG CLASS=icon SRC=\ref[userperk.icon] ICONSTATE='[userperk.icon_state]'> [T.He] looks like your notions of sanity don't apply to [T.him] at all!</span>\n"
+
 	if(hasHUD(usr,"security"))
 		var/perpname = get_id_name(name)
 		var/criminal = "None"
@@ -365,9 +390,8 @@
 		var/obj/item/clothing/under/U = w_uniform
 		if(U && istype(U) && U.sensor_mode >= 2)
 			msg += "<span class='deptradio'><b>Damage Specifics:</span> <span style=\"color:blue\">[round(src.getOxyLoss(), 1)]</span>-<span style=\"color:green\">[round(src.getToxLoss(), 1)]</span>-<span style=\"color:#FFA500\">[round(src.getFireLoss(), 1)]</span>-<span style=\"color:red\">[round(src.getBruteLoss(), 1)]</span></b>\n"
-	if(print_flavor_text()) msg += "[print_flavor_text()]\n"
-
 	msg += "*---------*</span>"
+	if(print_flavor_text()) msg += "\n[print_flavor_text()]"
 	if (pose)
 		if( findtext(pose,".",length(pose)) == 0 && findtext(pose,"!",length(pose)) == 0 && findtext(pose,"?",length(pose)) == 0 )
 			pose = addtext(pose,".") //Makes sure all emotes end with a period.

@@ -8,6 +8,7 @@
 	var/start_message_span
 	var/list/start_messages
 	var/list/end_messages
+	var/active_message // used as a description when psychologist or clown examines holder.
 
 	var/duration = 30 MINUTES //by default
 	var/end_time
