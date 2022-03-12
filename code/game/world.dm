@@ -397,7 +397,3 @@ proc/establish_db_connection()
 		return //No change required.
 
 	fps = new_value
-
-/world/Del()
-	disable_auxtools_debugger() //If we dont do this, we get phantom threads which can crash DD from memory access violations
-	..()
