@@ -358,7 +358,7 @@
 
 // update the icon & overlays to reflect mode & status
 /obj/machinery/disposal/proc/update()
-	cut_overlays()
+	overlays.Cut()
 	if(stat & BROKEN)
 		icon_state = "disposal-broken"
 		mode = 0
@@ -367,7 +367,7 @@
 
 	// flush handle
 	if(flush)
-		add_overlays(image('icons/obj/pipes/disposal.dmi', "dispover-handle"))
+		overlays += image('icons/obj/pipes/disposal.dmi', "dispover-handle")
 
 	// only handle is shown if no power
 	if(stat & NOPOWER || mode == -1)
@@ -375,13 +375,13 @@
 
 	// 	check for items in disposal - occupied light
 	if(contents.len > 0)
-		add_overlays(image('icons/obj/pipes/disposal.dmi', "dispover-full"))
+		overlays += image('icons/obj/pipes/disposal.dmi', "dispover-full")
 
 	// charging and ready light
 	if(mode == 1)
-		add_overlays(image('icons/obj/pipes/disposal.dmi', "dispover-charge"))
+		overlays += image('icons/obj/pipes/disposal.dmi', "dispover-charge")
 	else if(mode == 2)
-		add_overlays(image('icons/obj/pipes/disposal.dmi', "dispover-ready"))
+		overlays += image('icons/obj/pipes/disposal.dmi', "dispover-ready")
 
 // timed process
 // charge the gas reservoir and perform flush if ready
@@ -431,7 +431,7 @@
 /obj/machinery/disposal/proc/flush()
 
 	flushing = 1
-	FLICK("[icon_state]-flush", src)
+	flick("[icon_state]-flush", src)
 
 	var/wrapcheck = 0
 	var/obj/structure/disposalholder/H = new()	// virtual holder object which actually
@@ -498,18 +498,26 @@
 		qdel(H)
 
 /obj/machinery/disposal/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)
-	if (istype(mover,/obj/item) && mover.throwing)
+	if(ishuman(mover) && mover.throwing)
+		var/mob/living/carbon/human/H = mover
+		if(H.stats.getPerk(PERK_SPACE_ASSHOLE))
+			H.forceMove(src)
+			for(var/mob/M in viewers(src))
+				M.show_message("[H] dives into \the [src]!", 3)
+			flush = TRUE
+		return
+	else if (istype(mover,/obj/item) && mover.throwing)
 		var/obj/item/I = mover
 		if(istype(I, /obj/item/projectile))
 			return
-		if(prob(75))
-			I.forceMove(src)
-			for(var/mob/M in viewers(src))
-				M.show_message("\The [I] lands in \the [src].", 3)
 		else
-			for(var/mob/M in viewers(src))
-				M.show_message("\The [I] bounces off of \the [src]'s rim!", 3)
-		return 0
+			if(prob(75))
+				I.forceMove(src)
+				for(var/mob/M in viewers(src))
+					M.visible_message("\The [I] lands in \the [src].", 3)
+			else
+				for(var/mob/M in viewers(src))
+					M.visible_message("\The [I] bounces off of \the [src]\'s rim!", 3)
 	else
 		return ..(mover, target, height, air_group)
 
@@ -592,7 +600,8 @@
 			for(var/mob/living/H in src)
 				if(isdrone(H)) //Drones use the mailing code to move through the disposal system,
 					continue
-
+				if(H.stats.getPerk(PERK_SPACE_ASSHOLE)) //Assholes gain disposal immunity
+					continue
 				// Hurt any living creature jumping down disposals
 				var/multiplier = 1
 
@@ -897,6 +906,10 @@
 			return
 		if(3)
 			health -= rand(0,15)
+			healthcheck()
+			return
+		if(4)
+			health -= rand(0,5)
 			healthcheck()
 			return
 
@@ -1480,7 +1493,7 @@
 	// called when the holder exits the outlet
 /obj/structure/disposaloutlet/proc/expel(var/obj/structure/disposalholder/H)
 
-	FLICK("outlet-open", src)
+	flick("outlet-open", src)
 	playsound(src, 'sound/machines/warning-buzzer.ogg', 50, 0, 0)
 	sleep(20)	//wait until correct animation frame
 	playsound(src, 'sound/machines/hiss.ogg', 50, 0, 0)

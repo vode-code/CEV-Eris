@@ -20,13 +20,10 @@
 	spawn_tags = SPAWN_TAG_GUN_OS
 	fire_sound = 'sound/weapons/guns/fire/m41_shoot.ogg'
 
-	wield_delay = 0.4 SECOND
-	wield_delay_factor = 0.2 // 20 vig
-
 	spawn_blacklisted = TRUE //until loot rework
 
 
-/obj/item/gun/projectile/type_42/on_update_icon()
+/obj/item/gun/projectile/type_42/update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)

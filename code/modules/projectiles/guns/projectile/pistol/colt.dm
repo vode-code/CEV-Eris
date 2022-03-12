@@ -16,10 +16,9 @@
 	recoil_buildup = 4
 	gun_tags = list(GUN_GILDABLE)
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
-	wield_delay = 0.1 SECOND
-	wield_delay_factor = 0.05 // 5 vig
+	gun_parts = list(/obj/item/part/gun/frame/colt = 1, /obj/item/part/gun/grip/wood = 1, /obj/item/part/gun/mechanism/pistol = 1, /obj/item/part/gun/barrel/pistol = 1)
 
-/obj/item/gun/projectile/colt/on_update_icon()
+/obj/item/gun/projectile/colt/update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -38,3 +37,12 @@
 /obj/item/gun/projectile/colt/Initialize()
 	. = ..()
 	update_icon()
+
+/obj/item/part/gun/frame/colt
+	name = "Colt 1911 frame"
+	desc = "A Colt pistol frame. Winner of dozens of world wars, and loser of many more guerilla wars."
+	icon_state = "frame_1911"
+	result = /obj/item/gun/projectile/colt
+	grip = /obj/item/part/gun/grip/wood
+	mechanism = /obj/item/part/gun/mechanism/pistol
+	barrel = /obj/item/part/gun/barrel/pistol

@@ -20,10 +20,9 @@
 	penetration_multiplier = 0.8
 	recoil_buildup = 2
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
-	wield_delay = 0.1 SECOND
-	wield_delay_factor = 0.05 // 5 vig
+	gun_parts = list(/obj/item/part/gun/frame/giskard = 1, /obj/item/part/gun/grip/wood = 1, /obj/item/part/gun/mechanism/pistol = 1, /obj/item/part/gun/barrel/pistol = 1)
 
-/obj/item/gun/projectile/giskard/on_update_icon()
+/obj/item/gun/projectile/giskard/update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -45,3 +44,12 @@
 /obj/item/gun/projectile/giskard/Initialize()
 	. = ..()
 	update_icon()
+
+/obj/item/part/gun/frame/giskard
+	name = "Giskard frame"
+	desc = "A Giskard pistol frame. A ubiquitous pocket deterrent."
+	icon_state = "frame_giskard"
+	result = /obj/item/gun/projectile/giskard
+	grip = /obj/item/part/gun/grip/wood
+	mechanism = /obj/item/part/gun/mechanism/pistol
+	barrel = /obj/item/part/gun/barrel/pistol

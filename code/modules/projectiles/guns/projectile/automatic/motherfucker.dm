@@ -1,6 +1,6 @@
 /obj/item/gun/projectile/automatic/motherfucker
 	name = "HM Motherfucker .35 \"Punch Hole\""
-	desc = "A 6 barrel, pump action carbine, shakes like the devil. but will turn anything in a 90º from you in swiss cheese."
+	desc = "A 6 barrel, pump action carbine. Shakes like the devil, but will turn anything in a 90º radius in front of you in swiss cheese."
 	icon = 'icons/obj/guns/projectile/motherfucker.dmi'
 	icon_state = "motherfucker"
 	item_state = "motherfucker"
@@ -24,11 +24,9 @@
 	init_firemodes = list(
 		list(mode_name="6-round bursts", burst=6, fire_delay=null, move_delay=7, icon="burst"),
 		)
-	spawn_blacklisted = TRUE
+	spawn_tags = SPAWN_TAG_GUN_HANDMADE
 	var/recentpumpmsg = 0
 	var/pumped = FALSE
-	wield_delay = 1 SECOND
-	wield_delay_factor = 0.4 // 40 vig to insta wield
 
 /obj/item/gun/projectile/automatic/motherfucker/attack_self(mob/living/user)
 	if(world.time >= recentpumpmsg + 10)

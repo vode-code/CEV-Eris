@@ -16,11 +16,11 @@
 	damage_multiplier = 1.36
 	recoil_buildup = 15
 	spawn_frequency = 0
+	spawn_blacklisted = FALSE
+	spawn_tags = SPAWN_TAG_GUN_HANDMADE
 	var/chamber_open = FALSE
 	var/jammed = FALSE
 	var/jam_chance = 15
-	wield_delay = 0.1 SECOND
-	wield_delay_factor = 0.05 // 5 vig
 
 /obj/item/gun/projectile/handmade_pistol/New()
 	..()

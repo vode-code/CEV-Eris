@@ -1,7 +1,13 @@
 /datum/wires/rig
-	random = 1
 	holder_type = /obj/item/rig
 	wire_count = 5
+	descriptions = list(
+			new /datum/wire_description(RIG_SECURITY, "Security"),
+			new /datum/wire_description(RIG_AI_OVERRIDE, "AI override"),
+			new /datum/wire_description(RIG_SYSTEM_CONTROL, "System control"),
+			new /datum/wire_description(RIG_INTERFACE_LOCK, "Interface lock"),
+			new /datum/wire_description(RIG_INTERFACE_SHOCK, "Interface shock")
+	)
 
 //The defines for the wires are moved to rig.dm, as they are used there
 /*
@@ -39,7 +45,7 @@
 			rig.visible_message("\The [rig] twitches as several suit locks [rig.security_check_enabled?"close":"open"].")
 		if(RIG_AI_OVERRIDE)
 			rig.ai_override_enabled = !rig.ai_override_enabled
-			rig.visible_message("A small red light on [rig] [rig.ai_override_enabled?"goes dead":"flickers on"].")
+			rig.visible_message("A small red light on [rig] [rig.ai_override_enabled?"goes dead":"flick_lights on"].")
 		if(RIG_SYSTEM_CONTROL)
 			rig.malfunctioning += 10
 			if(rig.malfunction_delay <= 0)

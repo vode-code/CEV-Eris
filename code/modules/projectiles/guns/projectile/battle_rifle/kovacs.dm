@@ -26,10 +26,11 @@
 	one_hand_penalty = 20 //full sized rifle
 	zoom_factor = 0.6
 	fire_delay = 6.5
-	wield_delay = 0.4 SECOND
-	wield_delay_factor = 0.2 // semi-auto but good
+	gun_parts = list(/obj/item/part/gun/frame/kovacs = 1, /obj/item/part/gun/grip/serb = 1, /obj/item/part/gun/mechanism/autorifle = 1, /obj/item/part/gun/barrel/srifle = 1)
 
-/obj/item/gun/projectile/kovacs/on_update_icon()
+
+
+/obj/item/gun/projectile/kovacs/update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -47,3 +48,12 @@
 /obj/item/gun/projectile/kovacs/Initialize()
 	. = ..()
 	update_icon()
+
+/obj/item/part/gun/frame/kovacs
+	name = "Kovacs frame"
+	desc = "A Kovacs battle rifle frame. To punch through armor with panache."
+	icon_state = "frame_kovacs"
+	result = /obj/item/gun/projectile/kovacs
+	grip = /obj/item/part/gun/grip/serb
+	mechanism = /obj/item/part/gun/mechanism/autorifle
+	barrel = /obj/item/part/gun/barrel/srifle

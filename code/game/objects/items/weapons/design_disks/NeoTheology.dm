@@ -93,6 +93,7 @@
 		/datum/design/bioprinter/medical_supply,
 		/datum/design/bioprinter/engineering_tools,
 		/datum/design/bioprinter/engineering_supply,
+		/datum/design/bioprinter/engineering_material,
 		/datum/design/bioprinter/ammo,
 		/datum/design/bioprinter/tubular,
 		/datum/design/bioprinter/tubular/vial,
@@ -206,7 +207,7 @@
 	icon_state = "neotheology"
 	designs = list(
 		/datum/design/autolathe/nt/grenade/nt_flashbang,
-		/datum/design/autolathe/nt/grenade/nt_frag,
+		/datum/design/autolathe/nt/grenade/nt_heatwave,
 		/datum/design/autolathe/nt/grenade/nt_smokebomb
 	)
 

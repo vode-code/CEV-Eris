@@ -22,9 +22,6 @@
 		WEAPON_CHARGE,
 		)
 
-	wield_delay = 0.4 SECOND
-	wield_delay_factor = 0.2 // 20 vig
-
 /obj/item/gun/energy/gun/mounted
 	name = "mounted energy gun"
 	self_recharge = TRUE
@@ -55,11 +52,11 @@
 /obj/item/gun/energy/gun/martin/proc/update_mode()
 	var/datum/firemode/current_mode = firemodes[sel_mode]
 	if(current_mode.name == "stun")
-		add_overlays("taser_pdw")
+		overlays += "taser_pdw"
 	else
-		add_overlays("lazer_pdw")
+		overlays += "lazer_pdw"
 
-/obj/item/gun/energy/gun/martin/on_update_icon()
+/obj/item/gun/energy/gun/martin/update_icon()
 	cut_overlays()
 	if(cell && cell.charge >= charge_cost) //no overlay if we dont have any power
 		update_mode()
