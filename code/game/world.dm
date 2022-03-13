@@ -74,8 +74,6 @@ var/game_id
  * All atoms in both compiled and uncompiled maps are initialized()
  */
 /world/New()
-	//enable the debugger for VSC
-	enable_auxtools_debugger()
 	//logs
 	var/date_string = time2text(world.realtime, "YYYY/MM-Month/DD-Day")
 	href_logfile = file("data/logs/[date_string] hrefs.htm")

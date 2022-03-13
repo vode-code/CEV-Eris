@@ -103,10 +103,10 @@
 /datum/department/offship // Money from serbomat and billomat come here
 	name = "Offship entities"
 	id = DEPARTMENT_OFFSHIP
-	account_budget = 0
+	budget_base = 0
 
 /datum/department/entertainment
 	name = "The Circus"
 	id = DEPARTMENT_ENTERTAINMENT
 	account_initial_balance = 1800
-	funding_type = FUNDING_NONE // funding is only obtained as a reward for pranks, no passive funding
+	budget_base = 0 // funding is only obtained as a reward for pranks, no passive funding
