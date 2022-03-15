@@ -194,6 +194,7 @@ GLOBAL_LIST_EMPTY(ignore_health_alerts_from)
 	for(var/T in paths)
 		var/datum/individual_objective/IO = new T
 		if(initial(IO.bad_type) == T)
+			qdel(IO) // so it doesn't exist in nullspace never to be deleted or accessed
 			continue
 		GLOB.individual_objectives[T] = IO
 
