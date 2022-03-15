@@ -193,7 +193,18 @@ GLOBAL_LIST_EMPTY(ignore_health_alerts_from)
 	paths = subtypesof(/datum/individual_objective)
 	for(var/T in paths)
 		var/datum/individual_objective/IO = new T
+		if(initial(IO.bad_type) == T)
+			continue
 		GLOB.individual_objectives[T] = IO
+
+	paths = subtypesof(/datum/departmental_point_holder)
+	for(var/T in paths)
+		var/datum/departmental_point_holder/pointer = new T //not actually pointers
+		if(pointer.associated_department)
+			GLOB.point_holders[pointer.associated_department] = pointer // overwrites previous one for that department if there was one
+		else // but this only gets called once
+			GLOB.point_holders.Add(pointer) //is there, just not indexed
+
 
 	//Stashes
 	paths = subtypesof(/datum/stash)

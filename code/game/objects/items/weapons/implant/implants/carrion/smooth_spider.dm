@@ -19,4 +19,4 @@
 		if((locate(/obj/structure/multiz/stairs) in get_turf(loc)) || (locate(/obj/structure/multiz/ladder) in get_turf(loc)))
 			visible_message(SPAN_DANGER("\The [M] carefully avoids stepping down on \the [src]."))
 			return
-		M.slip("the [src.name]",3)
+		M.slip(src,3)

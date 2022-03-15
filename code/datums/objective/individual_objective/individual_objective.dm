@@ -45,6 +45,7 @@
 	var/la_explanation  = "<b><B>Note:</B><span style='font-size: 75%'> limited antag (LA) objectives provide an ability to harm only your target, \
 						or to push for faction on faction conflict, but do not allow you to kill everyone in the department to get inside for your \
 						needs.</span></b>"
+	var/bad_type // used for abstracts and allows children of them to be selected without parents missing vital stuff being selected
 
 /datum/individual_objective/proc/assign(datum/mind/new_owner)
 	SHOULD_CALL_PARENT(TRUE)

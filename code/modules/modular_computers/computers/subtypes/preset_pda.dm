@@ -140,7 +140,7 @@
 		if((locate(/obj/structure/multiz/stairs) in get_turf(loc)) || (locate(/obj/structure/multiz/ladder) in get_turf(loc)))
 			visible_message(SPAN_DANGER("\The [M] carefully avoids stepping down on \the [src]."))
 			return
-		M.slip()
+		M.slip(src)
 
 /obj/item/modular_computer/pda/club_worker/install_default_programs()
 	..()

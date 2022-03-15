@@ -294,7 +294,7 @@
 	..()
 	target = pick_candidates()
 	desc = "Get your hands on a [target.name]."
-	RegisterSignal(mind_holder, COMSING_HUMAN_EQUITP, .proc/task_completed)
+	RegisterSignal(mind_holder, COMSIG_HUMAN_EQUIP, .proc/task_completed)
 
 /datum/individual_objective/collenction/task_completed(obj/item/W)
 	if(W.type == target.type)
@@ -306,7 +306,7 @@
 
 /datum/individual_objective/collenction/completed()
 	if(completed) return
-	UnregisterSignal(mind_holder, COMSING_HUMAN_EQUITP)
+	UnregisterSignal(mind_holder, COMSIG_HUMAN_EQUIP)
 	..()
 
 /datum/individual_objective/economy
@@ -336,7 +336,7 @@
 	units_requested = rand(500, 1000)
 	desc = "The money must always flow but you must also prevent fees from ruining you.  \
 			Make a bank transfer from you personal account for amount of [units_requested][CREDITS]."
-	RegisterSignal(owner.initial_account, COMSIG_TRANSATION, .proc/task_completed)
+	RegisterSignal(owner.initial_account, COMSIG_TRANSACTION, .proc/task_completed)
 
 /datum/individual_objective/economy/task_completed(datum/money_account/S, datum/money_account/T, amount)
 	if(S == owner.initial_account && amount >= units_requested && T != S)
@@ -344,5 +344,5 @@
 
 /datum/individual_objective/economy/completed()
 	if(completed) return
-	UnregisterSignal(owner.initial_account, COMSIG_TRANSATION)
+	UnregisterSignal(owner.initial_account, COMSIG_TRANSACTION)
 	..()

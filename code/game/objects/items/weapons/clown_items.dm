@@ -14,7 +14,7 @@
 		if((locate(/obj/structure/multiz/stairs) in get_turf(loc)) || (locate(/obj/structure/multiz/ladder) in get_turf(loc)))
 			visible_message(SPAN_DANGER("\The [M] carefully avoids stepping down on \the [src]."))
 			return
-		M.slip("the [src.name]",4)
+		M.slip(src,4)
 /*
  * Soap
  */
@@ -46,7 +46,7 @@
 		if((locate(/obj/structure/multiz/stairs) in get_turf(loc)) || (locate(/obj/structure/multiz/ladder) in get_turf(loc)))
 			visible_message(SPAN_DANGER("\The [M] carefully avoids stepping down on \the [src]."))
 			return
-		M.slip("the [src.name]",3)
+		M.slip(src,3)
 
 /obj/item/soap/afterattack(atom/target, mob/user as mob, proximity)
 	if(!proximity) return

@@ -48,7 +48,9 @@
 #define COMSIG_SHUTTLE_SUPPLY "shuttle_supply"  //form sell()
 #define COMSIG_RITUAL_REVELATION "revelation_ritual"
 #define COMSIG_GROUP_RITUAL "grup_ritual"
-#define COMSIG_TRANSATION "transation"          //from transfer_funds()
+#define COMSIG_TRANSACTION "transaction"          //from transfer_funds()
+#define COMSIG_MISCHIEF "pranked" // for clown department points, from entertainment individual_objective completed()
+#define COMSIG_PERFORMANCE "performance" // also for entertainment department points but from clown performances
 
 // /atom signals
 #define COMSIG_EXAMINE "examine"								//from atom/examine(): (mob/user, distance)
@@ -90,10 +92,11 @@
 #define COMSIG_HUMAN_BREAKDOWN "human_breakdown"
 #define COMSING_AUTOPSY "human_autopsy"						  //from obj/item/autopsy_scanner/attack()
 #define COMSIG_HUMAN_ODDITY_LEVEL_UP "human_oddity_level_up"
-#define COMSING_HUMAN_EQUITP "human_equip_item"				   //from human/equip_to_slot()
+#define COMSIG_HUMAN_EQUIP "human_equip_item"				   //from human/equip_to_slot()
 #define COMSIG_HUMAN_HEALTH "human_health"					   //from human/updatehealth()
 #define COMSIG_HUMAN_SANITY "human_sanity"						//from /datum/sanity/proc/onLife()
 #define COMSIG_HUMAN_INSTALL_IMPLANT "human_install_implant"
+#define COMSIG_SLIPPED "slippy" // from human slip()
 // /datum/species signals
 
 // /obj signals
@@ -106,8 +109,8 @@
 #define COMSIG_AREA_APC_OPERATING "area_operating"  //from apc process()
 #define COMSIG_AREA_APC_DELETED "area_apc_gone"
 #define COMSIG_AREA_APC_POWER_CHANGE "area_apc_power_change"
-#define COMSING_DESTRUCTIVE_ANALIZER "destructive_analizer"
-#define COMSIG_TURRENT "create_turrent"
+#define COMSIG_DESTRUCTIVE_ANALYZER "destructive_analyzer"
+#define COMSIG_TURRET "create_turret"
 
 // /obj/item signals
 #define COMSIG_IATTACK "item_attack"									//from /mob/ClickOn(): (/atom, /src, /params) If any reply to this returns TRUE, overrides attackby and afterattack

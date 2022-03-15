@@ -1441,6 +1441,13 @@ var/list/rank_prefix = list(\
 	regen_slickness(-3)
 	dodge_time = get_game_time()
 	confidence = FALSE
+	if(!stats.getPerk(PERK_CLOWN))
+		if(isobj(slipped_on))
+			var/obj/slippyobj = slipped_on
+			var/key = slippyobj.fingerprintslast
+			var/mob/slippymob = key2mob(key)
+			SEND_SIGNAL(slippymob, COMSIG_SLIPPED, src)
+
 
 /mob/living/carbon/human/trip(tripped_on, stun_duration)
 	if(buckled)
