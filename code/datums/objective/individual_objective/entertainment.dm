@@ -41,3 +41,45 @@
 		return
 	UnregisterSignal(mind_holder, COMSIG_SLIPPED)
 	..()
+
+/datum/individual_objective/entertainment/monkeys
+	name = "Monkey Business"
+	units_requested =  5
+	var/area/target
+
+/datum/individual_objective/entertainment/monkeys/assign() // copied from Guild Stripping Operation
+	..()
+	units_requested = rand(5,7)
+	var/list/monkeyed_areas = list()
+	for(var/area/A in ship_areas)
+		var/current_monkey_quantity = 0
+		if(A in monkeyed_areas)
+			continue
+		if (istype(A, /area/shuttle))
+			continue
+		if (A.is_maintenance)
+			continue
+		for(var/mob/living/carbon/human/monkey/M in A.contents)
+			current_monkey_quantity += 1
+		if(current_monkey_quantity >= units_requested)
+			continue
+		monkeyed_areas += A
+	target = pick(monkeyed_areas)
+	desc = "Ensure that [target] has at least [units_requested] monkeys in it."
+	RegisterSignal(mind_holder, COMSIG_MOB_LIFE, .proc/task_completed)
+
+/datum/individual_objective/entertainment/monkeys/task_completed()
+	if(mind_holder.stat == DEAD)
+		return
+	units_completed = 0
+	for(var/mob/living/carbon/human/monkey/M in target.contents)
+		units_completed += 1
+	if(units_completed >= units_requested)
+		completed()
+
+/datum/individual_objective/entertainment/monkeys/completed()
+	if(completed) return
+	UnregisterSignal(mind_holder, COMSIG_MOB_LIFE)
+	..()
+
+
