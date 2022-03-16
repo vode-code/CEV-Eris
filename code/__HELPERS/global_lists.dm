@@ -192,10 +192,11 @@ GLOBAL_LIST_EMPTY(ignore_health_alerts_from)
 
 	paths = subtypesof(/datum/individual_objective)
 	for(var/T in paths)
-		var/datum/individual_objective/IO = new T
-		if(initial(IO.bad_type) == T)
-			qdel(IO) // so it doesn't exist in nullspace never to be deleted or accessed
+		var/datum/individual_objective/fobjective = T
+		if(initial(fobjective.bad_type) == T)
 			continue
+		var/datum/individual_objective/IO = new T
+
 		GLOB.individual_objectives[T] = IO
 
 	paths = subtypesof(/datum/departmental_point_holder)

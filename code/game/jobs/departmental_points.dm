@@ -1,9 +1,6 @@
 // this is not for departmental score, see code/game/gamemodes/scores.dm for scores.
 GLOBAL_LIST_EMPTY(point_holders)
 
-/datum/controller/subsystem/department_points/proc/SetupPoint_Holders()
-	for(var/P in subtypesof(/datum/departmental_point_holder))
-		new P(NULLSPACE) // they gotta get made somehow and the map is not gonna do it for datums.
 
 /datum/departmental_point_holder
 	var/associated_department //which department uses this
