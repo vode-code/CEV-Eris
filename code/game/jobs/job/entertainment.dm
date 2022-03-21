@@ -25,3 +25,8 @@
 	loyalties = "You are loyal to your sense of humour. Use it to the best of your ability to ensure that everyone - not just you - is having a good time.<br>\
 	Your second loyalty is to the Circus. Should your clowning be too much to bear for the crew, and the Mimes are dispatched, it's your solemn duty to make the best possible show out of the ensuing chase."
 
+/obj/landmark/join/start/clown
+	name = "Clown"
+	icon_state = "player-black"
+	join_tag = /datum/job/clown
+

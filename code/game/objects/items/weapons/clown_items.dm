@@ -126,6 +126,7 @@
 	item_state = "bike_horn"
 	throwforce = WEAPON_FORCE_HARMLESS
 	w_class = ITEM_SIZE_SMALL
+	matter = list(MATERIAL_PLASTIC = 2)
 	throw_speed = 3
 	throw_range = 15
 	attack_verb = list("HONKED")

@@ -87,3 +87,40 @@
 /datum/design/autolathe/device/mechpainter
 	name = "mech painter"
 	build_path = /obj/item/device/floor_painter/mech_painter
+
+/datum/design/autolathe/device/bikehorn
+	name = "bike horn"
+	build_path = /obj/item/bikehorn
+
+/datum/design/autolathe/device/paint/red
+	name = "red paint"
+	build_path = /obj/item/reagent_containers/glass/paint/red
+
+/datum/design/autolathe/device/paint/yellow
+	name = "yellow paint"
+	build_path = /obj/item/reagent_containers/glass/paint/yellow
+
+/datum/design/autolathe/device/paint/green
+	name = "green paint"
+	build_path = /obj/item/reagent_containers/glass/paint/green
+
+/datum/design/autolathe/device/paint/blue
+	name = "blue paint"
+	build_path = /obj/item/reagent_containers/glass/paint/blue
+
+/datum/design/autolathe/device/paint/purple
+	name = "purple paint"
+	build_path = /obj/item/reagent_containers/glass/paint/purple
+
+/datum/design/autolathe/device/paint/black
+	name = "black paint"
+	build_path = /obj/item/reagent_containers/glass/paint/black
+
+/datum/design/autolathe/device/paint/white
+	name = "white paint"
+	build_path = /obj/item/reagent_containers/glass/paint/white
+
+/datum/design/autolathe/device/pie
+	name = "banana cream pie"
+	build_path = /obj/item/reagent_containers/food/snacks/pie
+	removed_materials = list(MATERIAL_BIOMATTER = 10) // we want to craft this with the reagents not biomatter

@@ -1146,6 +1146,7 @@
 	nutriment_desc = list("pie" = 3, "cream" = 2)
 	nutriment_amt = 4
 	preloaded_reagents = list("banana" = 5)
+	matter_reagents = list("banana" = 5, "sugar" = 5, "flour" = 5) // used for clown printing reagents
 	cooked = TRUE
 	junk_food = TRUE
 	spawn_tags = SPAWN_TAG_JUNKFOOD

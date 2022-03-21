@@ -1152,3 +1152,8 @@
 /area/eris/storage/tech
 	name = "Technical Storage"
 	icon_state = "auxstorage"
+
+// Entertainment
+/area/eris/calliope
+	name = "Calliope"
+	forced_ambience = list('sound/ambience/calliopeambience.ogg')

@@ -771,3 +771,12 @@ var/list/name_to_material
 	flags = MATERIAL_PADDING
 	ignition_point = T0C+232
 	melting_point = T0C+300
+
+/material/cloth_pink
+	name = "pink"
+	display_name ="pink"
+	use_name = "pink cloth"
+	icon_colour = "#FF007F"
+	flags = MATERIAL_PADDING
+	ignition_point = T0C+232
+	melting_point = T0C+300

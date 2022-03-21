@@ -7,7 +7,9 @@
 	var/sort_string = "ZZZZZ"		//Sorting order
 
 	var/list/materials = list()		//List of materials. Format: "id" = amount.
+	var/list/removed_materials = list() //List of removed materials. Format: "id" = amount.
 	var/list/chemicals = list()		//List of reagents. Format: "id" = amount.
+	var/list/removed_chemicals = list() //List of removed reagents. Format: "id" = amount.
 	var/adjust_materials = TRUE		//Whether material efficiency applies to this design
 	var/build_path			//The path of the object that gets created.
 	var/build_type = NONE			//Flag as to what kind machine the design is built in. See defines.
@@ -94,6 +96,7 @@
 
 		for(var/a in mats)
 			var/amount = mats[a] * multiplier
+			amount -= removed_materials[a] * multiplier
 			if(amount)
 				LAZYAPLUS(materials, a, amount)
 
@@ -101,6 +104,7 @@
 	if (mats && mats.len)
 		for(var/a in mats)
 			var/amount = mats[a] * multiplier
+			amount -= removed_chemicals[a] * multiplier
 			if(amount)
 				LAZYAPLUS(chemicals, a, amount)
 

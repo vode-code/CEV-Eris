@@ -210,6 +210,13 @@
 /obj/structure/bed/psych/New(var/newloc)
 	..(newloc, MATERIAL_WOOD, MATERIAL_LEATHER)
 
+/obj/structure/bed/clown
+	name = "clown's bed"
+	desc = "Add Description Here."
+
+/obj/structure/bed/clown/New(var/newloc)
+	..(newloc, MATERIAL_WOOD, "pink")
+
 /obj/structure/bed/padded/New(var/newloc)
 	..(newloc, MATERIAL_PLASTIC, "cotton")
 

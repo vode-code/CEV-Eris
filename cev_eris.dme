@@ -1032,6 +1032,7 @@
 #include "code\game\objects\items\weapons\design_disks\_disk.dm"
 #include "code\game\objects\items\weapons\design_disks\asters.dm"
 #include "code\game\objects\items\weapons\design_disks\autolathe_disks.dm"
+#include "code\game\objects\items\weapons\design_disks\entertainment.dm"
 #include "code\game\objects\items\weapons\design_disks\excelsior.dm"
 #include "code\game\objects\items\weapons\design_disks\frozen_star.dm"
 #include "code\game\objects\items\weapons\design_disks\ironhammer.dm"

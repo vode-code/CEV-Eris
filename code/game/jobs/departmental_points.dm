@@ -20,7 +20,7 @@ GLOBAL_LIST_EMPTY(point_holders)
 	associated_department = DEPARTMENT_ENTERTAINMENT
 
 /datum/departmental_point_holder/entertainment/register_rewarding_tasks(mob/to_register_on)
-	RegisterSignal(to_register_on, COMSIG_MISCHIEF,  new/datum/callback(src, .proc/increment_points, 3))
+	RegisterSignal(to_register_on, COMSIG_MISCHIEF,  new/datum/callback(src, .proc/increment_points, 13))
 	// if it is a callback from the start(it transforms proc references into callbacks) RegisterSignal can send arguments.
 	RegisterSignal(to_register_on, COMSIG_PERFORMANCE, .proc/increment_points)
 
