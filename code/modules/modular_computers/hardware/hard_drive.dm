@@ -3,7 +3,7 @@
 	desc = "A small power efficient solid state drive for use in basic computers where power efficiency is desired."
 	icon_state = "hdd_normal"
 	power_usage = 25					// SSD or something with low power usage
-	hardware_size = 1
+	w_class = 1
 	critical = TRUE
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 1, MATERIAL_GLASS = 1)
 	origin_tech = list(TECH_DATA = 1, TECH_ENGINEERING = 1)
@@ -30,7 +30,7 @@
 	price_tag = 100
 	rarity_value = 25
 	power_usage = 50 					// Hybrid, medium capacity and medium power storage
-	hardware_size = 2
+	w_class = 2
 
 /obj/item/computer_hardware/hard_drive/super
 	name = "super hard drive"
@@ -42,7 +42,7 @@
 	price_tag = 200
 	rarity_value = 50
 	power_usage = 100					// High-capacity but uses lots of power, shortening battery life. Best used with APC link.
-	hardware_size = 2
+	w_class = 2
 
 /obj/item/computer_hardware/hard_drive/cluster
 	name = "cluster hard drive"
@@ -53,7 +53,7 @@
 	price_tag = 500
 	max_capacity = 2048
 	matter = list(MATERIAL_STEEL = 8, MATERIAL_PLASTIC = 4, MATERIAL_GLASS = 4, MATERIAL_GOLD = 8)
-	hardware_size = 3
+	w_class = 3
 
 // For tablets, etc. - highly power efficient.
 /obj/item/computer_hardware/hard_drive/small
@@ -66,7 +66,7 @@
 	price_tag = 50
 	rarity_value = 8.33
 	max_capacity = 64
-	hardware_size = 1
+	w_class = 1
 
 /obj/item/computer_hardware/hard_drive/small/adv
 	name = "small advanced hard drive"
@@ -87,7 +87,7 @@
 	origin_tech = list(TECH_DATA = 1, TECH_ENGINEERING = 1)
 	price_tag = 25
 	max_capacity = 32
-	hardware_size = 1
+	w_class = 1
 
 /obj/item/computer_hardware/hard_drive/Initialize()
 	. = ..()

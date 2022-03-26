@@ -4,7 +4,7 @@
 	power_usage = 50
 	origin_tech = list(TECH_DATA = 2, TECH_ENGINEERING = 2)
 	icon_state = "printer"
-	hardware_size = 1
+	w_class = 1
 	var/stored_paper = 10
 	var/max_paper = 10
 

@@ -33,15 +33,18 @@
 	s.set_up(10, 1, computer.loc)
 	s.start()
 
-	if(computer.hard_drive)
-		computer.hard_drive.damage = 100
-		computer.hard_drive.stored_files.Cut()
+	var/obj/item/computer_hardware/hard_drive/brick = computer.hardware["hard_drive"]
+	if(brick)
+		brick.damage = 100
+		brick.stored_files.Cut()
 
-	if(computer.cell && prob(25))
-		computer.cell.charge = 0
+	var/obj/item/cell/dud = computer.hardware["cell"]
+	if(dud && prob(25))
+		dud.charge = 0
 
-	if(computer.tesla_link && prob(50))
-		computer.tesla_link.damage = 100
+	var/obj/item/computer_hardware/tesla_link/burnt = computer.hardware["tesla_link"]
+	if(burnt && prob(50))
+		burnt.damage = 100
 
 /datum/computer_file/program/revelation/Topic(href, href_list)
 	if(..())

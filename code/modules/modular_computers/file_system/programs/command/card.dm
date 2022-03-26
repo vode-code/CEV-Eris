@@ -10,11 +10,11 @@
 	size = 8
 
 	var/list/access_lookup = list(access_change_sec, 	//Lookup list for all the accesses that can use the ID computer.
-									access_change_medbay, 
-									access_change_research, 
-									access_change_engineering, 
-									access_change_ids, 
-									access_change_nt, 
+									access_change_medbay,
+									access_change_research,
+									access_change_engineering,
+									access_change_ids,
+									access_change_nt,
 									access_change_cargo,
 									access_change_club)
 
@@ -31,11 +31,12 @@
 	data["station_name"] = station_name()
 	data["manifest"] = html_crew_manifest()
 	data["assignments"] = show_assignments
+	var/obj/item/computer_hardware/card_slot/card_slot = program.computer.hardware["card_slot"]
 	if(program && program.computer)
-		data["have_id_slot"] = !!program.computer.card_slot
-		data["have_printer"] = !!program.computer.printer
+		data["have_id_slot"] = !!card_slot
+		data["have_printer"] = !!program.computer.hardware["printer"]
 		data["authenticated"] = program.can_run(user)
-		if(!program.computer.card_slot)
+		if(!card_slot)
 			mod_mode = 0 //We can't modify IDs when there is no card reader
 	else
 		data["have_id_slot"] = 0
@@ -44,8 +45,8 @@
 	data["mmode"] = mod_mode
 	data["centcom_access"] = is_centcom
 
-	if(program && program.computer && program.computer.card_slot)
-		var/obj/item/card/id/id_card = program.computer.card_slot.stored_card
+	if(program && program.computer && card_slot)
+		var/obj/item/card/id/id_card = card_slot.stored_card
 		data["has_id"] = !!id_card
 		data["id_account_number"] = id_card ? id_card.associated_account_number : null
 		data["id_email_login"] = id_card ? id_card.associated_email_login["login"] : null
@@ -70,8 +71,8 @@
 	data["all_centcom_access"] = is_centcom
 	data["regions"] = list()
 
-	if(program.computer.card_slot && program.computer.card_slot.stored_card)
-		var/obj/item/card/id/id_card = program.computer.card_slot.stored_card
+	if(card_slot && card_slot.stored_card)
+		var/obj/item/card/id/id_card = card_slot.stored_card
 		if(is_centcom)
 			var/list/all_centcom_access = list()
 			for(var/access in get_all_centcom_access())
@@ -104,7 +105,8 @@
 		ui.open()
 
 /datum/nano_module/program/card_mod/proc/format_jobs(list/jobs)
-	var/obj/item/card/id/id_card = program.computer.card_slot ? program.computer.card_slot.stored_card : null
+	var/obj/item/computer_hardware/card_slot/card_slot = program.computer.hardware["card_slot"]
+	var/obj/item/card/id/id_card = card_slot ? card_slot.stored_card : null
 	var/list/formatted = list()
 	for(var/job in jobs)
 		formatted.Add(list(list(
@@ -122,11 +124,12 @@
 	if(..())
 		return 1
 
+	var/obj/item/computer_hardware/card_slot/card_slot = computer.hardware["card_slot"]
 	var/mob/user = usr
 	var/obj/item/card/id/user_id_card = user.GetIdCard()
 	var/obj/item/card/id/id_card
-	if (computer.card_slot)
-		id_card = computer.card_slot.stored_card
+	if (card_slot)
+		id_card = card_slot.stored_card
 	if (!user_id_card || !authorized(user_id_card))
 		to_chat(user, SPAN_WARNING("Access denied"))
 		return
@@ -144,10 +147,11 @@
 			else
 				module.show_assignments = 1
 		if("print")
+			var/obj/item/computer_hardware/printer/printer = computer.hardware["printer"]
 			if(!authorized(user_id_card))
 				to_chat(user, SPAN_WARNING("Access denied."))
 				return
-			if(computer && computer.printer) //This option should never be called if there is no printer
+			if(computer && printer) //This option should never be called if there is no printer
 				if(module.mod_mode)
 					if(can_run(user, 1))
 						var/contents = {"<h4>Access Report</h4>
@@ -167,7 +171,7 @@
 							if(A in known_access_rights)
 								contents += "  [get_access_desc(A)]"
 
-						if(!computer.printer.print_text(contents,"access report"))
+						if(!printer.print_text(contents,"access report"))
 							to_chat(user, SPAN_NOTICE("Hardware error: Printer was unable to print the file. It may be out of paper."))
 							return
 						else
@@ -177,14 +181,14 @@
 									<br>
 									[html_crew_manifest()]
 									"}
-					if(!computer.printer.print_text(contents,text("crew manifest ([])", stationtime2text())))
+					if(!printer.print_text(contents,text("crew manifest ([])", stationtime2text())))
 						to_chat(user, SPAN_NOTICE("Hardware error: Printer was unable to print the file. It may be out of paper."))
 						return
 					else
 						computer.visible_message(SPAN_NOTICE("\The [computer] prints out paper."))
 		if("eject")
 			if(computer)
-				if(computer.card_slot && computer.card_slot.stored_card)
+				if(card_slot && card_slot.stored_card)
 					computer.proc_eject_id(user)
 				else
 					computer.attackby(user.get_active_hand(), user)

@@ -20,7 +20,8 @@ GLOBAL_LIST_INIT(default_uplink_source_priority, list(
 
 /decl/uplink_source/pda/setup_uplink_source(var/mob/M, var/amount)
 	var/obj/item/modular_computer/pda/P = find_in_mob(M, /obj/item/modular_computer/pda)
-	if(!P || !P.hard_drive)
+	var/obj/item/computer_hardware/hard_drive/drive = P.hardware["hard_drive"]
+	if(!P || !drive)
 		return SETUP_FAILED
 
 	var/pda_pass = "[rand(100,999)] [pick(GLOB.greek_letters)]"
@@ -28,11 +29,11 @@ GLOBAL_LIST_INIT(default_uplink_source_priority, list(
 	P.hidden_uplink = T
 	T.trigger_code = pda_pass
 	var/datum/computer_file/program/uplink/program = new(pda_pass)
-	if(!P.hard_drive.try_store_file(program))
-		P.hard_drive.remove_file(P.hard_drive.find_file_by_name(program.filename))	//Maybe it already has a fake copy.
-	if(!P.hard_drive.try_store_file(program))
+	if(!drive.try_store_file(program))
+		drive.remove_file(drive.find_file_by_name(program.filename))	//Maybe it already has a fake copy.
+	if(!drive.try_store_file(program))
 		return SETUP_FAILED	//Not enough space or other issues.
-	P.hard_drive.store_file(program)
+	drive.store_file(program)
 	to_chat(M, "<span class='notice'>A portable object teleportation relay has been installed in your [P.name]. Simply enter the code \"[pda_pass]\" in your new program to unlock its hidden features.</span>")
 	M.mind.store_memory("<B>Uplink passcode:</B> [pda_pass] ([P.name]).")
 

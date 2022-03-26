@@ -81,11 +81,12 @@ Subtypes
 	pattern = "^ifconfig$"
 
 /datum/terminal_command/ifconfig/proper_input_entered(text, mob/user, datum/terminal/terminal)
-	if(!terminal.computer.network_card)
+	var/obj/item/computer_hardware/network_card/netaccess = terminal.computer.hardware["network_card"]
+	if(!netaccess)
 		return "No network adaptor found."
-	if(!terminal.computer.network_card.check_functionality())
+	if(!netaccess.check_functionality())
 		return "Network adaptor not activated."
-	return terminal.computer.network_card.get_network_tag()
+	return netaccess.get_network_tag()
 
 /datum/terminal_command/hwinfo
 	name = "hwinfo"
@@ -105,7 +106,7 @@ Subtypes
 	if(!ch)
 		return "hwinfo: No such hardware found."
 	ch.diagnostics(user)
-	return "Running diagnostic protocols..."	
+	return "Running diagnostic protocols..."
 
 // Sysadmin
 /datum/terminal_command/relays
@@ -153,11 +154,13 @@ Subtypes
 	if(length(text) < 8)
 		return
 	var/obj/item/modular_computer/origin = terminal.computer
-	if(!ntnet_global.check_function() || !origin || !origin.network_card || !origin.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/onetaccess = origin.hardware["network_card"]
+	if(!ntnet_global.check_function() || !origin || !onetaccess || !onetaccess.check_functionality())
 		return
 	var/nid = text2num(copytext(text, 8))
 	var/obj/item/modular_computer/comp = ntnet_global.get_computer_by_nid(nid)
-	if(!comp || !comp.enabled || !comp.network_card || !comp.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/cnetaccess = comp.hardware["network_card"]
+	if(!comp || !comp.enabled || !cnetaccess || !cnetaccess.check_functionality())
 		return
 	return "... Estimating location: [get_area(comp)]"
 
@@ -173,12 +176,14 @@ Subtypes
 		. += "ping: Improper syntax. Use ping nid."
 		return
 	var/obj/item/modular_computer/origin = terminal.computer
-	if(!ntnet_global.check_function() || !origin || !origin.network_card || !origin.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/onetaccess = origin.hardware["network_card"]
+	if(!ntnet_global.check_function() || !origin || !onetaccess || !onetaccess.check_functionality())
 		. += "failed. Check network status."
 		return
 	var/nid = text2num(copytext(text, 6))
 	var/obj/item/modular_computer/comp = ntnet_global.get_computer_by_nid(nid)
-	if(!comp || !comp.enabled || !comp.network_card || !comp.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/cnetaccess = comp.hardware["network_card"]
+	if(!comp || !comp.enabled || !cnetaccess || !cnetaccess.check_functionality())
 		. += "failed. Target device not responding."
 		return
 	. += "ping successful."
@@ -195,13 +200,15 @@ Subtypes
 	if(length(text) < 5)
 		return "ssh: Improper syntax. Use ssh nid."
 	var/obj/item/modular_computer/origin = terminal.computer
-	if(!ntnet_global.check_function() || !origin || !origin.network_card || !origin.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/onetaccess = origin.hardware["network_card"]
+	if(!ntnet_global.check_function() || !origin || !onetaccess || !onetaccess.check_functionality())
 		return "ssh: Check network connectivity."
 	var/nid = text2num(copytext(text, 5))
 	var/obj/item/modular_computer/comp = ntnet_global.get_computer_by_nid(nid)
 	if(comp == origin)
 		return "ssh: Error; can not open remote terminal to self."
-	if(!comp || !comp.enabled || !comp.network_card || !comp.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/cnetaccess = comp.hardware["network_card"]
+	if(!comp || !comp.enabled || !cnetaccess || !cnetaccess.check_functionality())
 		return "ssh: No active device with this nid found."
 	if(comp.has_terminal(user))
 		return "ssh: A remote terminal to this device is already active."

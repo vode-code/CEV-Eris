@@ -36,18 +36,20 @@
 	if(program)
 		data = program.get_header_data()
 
-	var/list/hardware = movable.get_all_components()
+	var/list/activehardware = movable.get_all_components()
 
-	data["disk_size"] = movable.hard_drive.max_capacity
-	data["disk_used"] = movable.hard_drive.used_capacity
+	var/obj/item/computer_hardware/hard_drive/hard_drive = movable.hardware["hard_drive"]
+	var/obj/item/cell/cell = movable.hardware["cell"]
+	data["disk_size"] = hard_drive.max_capacity
+	data["disk_used"] = hard_drive.used_capacity
 	data["power_usage"] = movable.last_power_usage
-	data["battery_exists"] = movable.cell ? 1 : 0
-	if(movable.cell)
-		data["battery_rating"] = movable.cell.maxcharge
-		data["battery_percent"] = round(movable.cell.percent())
+	data["battery_exists"] = cell ? 1 : 0
+	if(cell)
+		data["battery_rating"] = cell.maxcharge
+		data["battery_percent"] = round(cell.percent())
 
 	var/list/all_entries[0]
-	for(var/obj/item/computer_hardware/H in hardware)
+	for(var/obj/item/computer_hardware/H in activehardware)
 		all_entries.Add(list(list(
 		"name" = H.name,
 		"desc" = H.desc,

@@ -22,10 +22,11 @@
 	if(!CanInteractWith(user, origin_computer, GLOB.default_state))
 		return FALSE
 
-
-	if(!origin_computer.network_card || !origin_computer.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/onetaccess = origin_computer.hardware["network_card"]
+	var/obj/item/computer_hardware/network_card/netaccess = computer.hardware["network_card"]
+	if(!onetaccess || !onetaccess.check_functionality())
 		return FALSE
-	if(!computer.network_card || !computer.network_card.check_functionality())
+	if(!netaccess || !netaccess.check_functionality())
 		return FALSE
 	if(!ntnet_global.check_function())
 		return FALSE

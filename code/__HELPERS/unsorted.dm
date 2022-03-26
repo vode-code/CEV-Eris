@@ -1054,10 +1054,11 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 			return zone
 
 /proc/get(atom/loc, type)
-	while(loc)
-		if(istype(loc, type))
-			return loc
-		loc = loc.loc
+	var/atom/temploc = loc
+	while(temploc)
+		if(istype(temploc, type))
+			return temploc
+		temploc = temploc.loc
 	return null
 
 /proc/get_turf_or_move(turf/location)

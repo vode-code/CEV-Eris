@@ -1,13 +1,17 @@
 /obj/item/modular_computer/proc/update_verbs()
 	verbs.Cut()
-	if(ai_slot)
+	if(hardware["ai_slot"])
 		verbs |= /obj/item/modular_computer/verb/eject_ai
-	if(portable_drive)
+	if(hardware["portable_drive"])
 		verbs |= /obj/item/modular_computer/verb/eject_usb
+	var/obj/item/computer_hardware/card_slot/card_slot = hardware["card_slot"]
 	if(card_slot && card_slot.stored_card)
 		verbs |= /obj/item/modular_computer/verb/eject_id
-	if(stores_pen && istype(stored_pen))
-		verbs |= /obj/item/modular_computer/verb/remove_pen
+	var/stores_pen = istype(src, /obj/item/modular_computer/pda)
+	if(stores_pen)
+		var/obj/item/modular_computer/pda/penholder = src
+		if (istype(penholder.stored_pen))
+			verbs |= /obj/item/modular_computer/verb/remove_pen
 
 	verbs |= /obj/item/verb/verb_pickup
 	verbs |= /obj/item/verb/move_to_top
@@ -85,14 +89,16 @@
 
 	if(!can_interact(usr))
 		return
-
-	if(istype(stored_pen))
-		to_chat(usr, SPAN_NOTICE("You remove [stored_pen] from [src]."))
-		stored_pen.forceMove(get_turf(src))
-		if(!issilicon(usr))
-			usr.put_in_hands(stored_pen)
-		stored_pen = null
-		update_verbs()
+	if(istype(src, /obj/item/modular_computer/pda))
+		var/obj/item/modular_computer/pda/penholder = src
+		var/obj/item/pen/stored_pen = penholder.stored_pen
+		if(istype(stored_pen))
+			to_chat(usr, SPAN_NOTICE("You remove [stored_pen] from [src]."))
+			stored_pen.forceMove(get_turf(src))
+			if(!issilicon(usr))
+				usr.put_in_hands(stored_pen)
+			penholder.stored_pen = null
+			update_verbs()
 
 /obj/item/modular_computer/proc/proc_eject_id(mob/user)
 	if(!user)
@@ -105,6 +111,7 @@
 		var/datum/computer_file/program/PRG = p
 		PRG.event_id_removed()
 
+	var/obj/item/computer_hardware/card_slot/card_slot = hardware["card_slot"]
 	card_slot.stored_card.forceMove(get_turf(src))
 	if(!issilicon(user))
 		user.put_in_hands(card_slot.stored_card)
@@ -117,14 +124,13 @@
 /obj/item/modular_computer/proc/proc_eject_usb(mob/user)
 	if(!user)
 		user = usr
+	var/obj/item/computer_hardware/hard_drive/portable/PD = hardware["portable_drive"]
 
-	if(!portable_drive)
+	if(!PD)
 		to_chat(user, "There is no portable device connected to \the [src].")
 		return
 
-	var/obj/item/computer_hardware/hard_drive/portable/PD = portable_drive
-
-	uninstall_component(portable_drive, user)
+	uninstall_component(hardware["portable_drive"], user)
 	user.put_in_hands(PD)
 	update_uis()
 
@@ -132,6 +138,7 @@
 	if(!user)
 		user = usr
 
+	var/obj/item/computer_hardware/ai_slot/ai_slot = hardware["ai_slot"]
 	if(!ai_slot || !ai_slot.stored_card)
 		to_chat(user, "There is no intellicard connected to \the [src].")
 		return
@@ -167,6 +174,7 @@
 /obj/item/modular_computer/attackby(obj/item/W, mob/user, sound_mute = FALSE)
 	if(istype(W, /obj/item/card/id)) // ID Card, try to insert it.
 		var/obj/item/card/id/I = W
+		var/obj/item/computer_hardware/card_slot/card_slot = hardware["card_slot"]
 		if(!card_slot)
 			to_chat(user, "You try to insert [I] into [src], but it does not have an ID card slot installed.")
 			return
@@ -187,23 +195,18 @@
 		to_chat(user, "You insert [I] into [src].")
 
 		return
-	if(istype(W, /obj/item/pen) && stores_pen)
-		if(istype(stored_pen))
-			to_chat(user, "<span class='notice'>There is already a pen in [src].</span>")
-			return
-		if(!insert_item(W, user))
-			return
-		stored_pen = W
-		update_verbs()
-		return
 
+
+	var/obj/item/computer_hardware/scanner/scanner = hardware["scanner"]
 	if(scanner && scanner.do_on_attackby(user, W))
 		return
 
 	if(istype(W, /obj/item/paper) || istype(W, /obj/item/paper_bundle))
+		var/obj/item/computer_hardware/printer/printer = hardware["printer"]
 		if(printer)
 			printer.attackby(W, user)
 	if(istype(W, /obj/item/device/aicard))
+		var/obj/item/computer_hardware/ai_slot/ai_slot = hardware["ai_slot"]
 		if(!ai_slot)
 			return
 		ai_slot.attackby(W, user)
@@ -211,8 +214,6 @@
 	if(!modifiable)
 		return ..()
 
-	if(istype(W, suitable_cell) || istype(W, /obj/item/computer_hardware))
-		try_install_component(W, user)
 
 	if(istype(W, /obj/item/device/spy_bug))
 		user.drop_item()
@@ -220,11 +221,11 @@
 
 	var/obj/item/tool/tool = W
 	if(tool)
-		var/list/usable_qualities = list(QUALITY_SCREW_DRIVING, QUALITY_WELDING, QUALITY_BOLT_TURNING)
+		var/list/usable_qualities = list(QUALITY_SCREW_DRIVING, QUALITY_WELDING, QUALITY_BOLT_TURNING, QUALITY_PRYING)
 		var/tool_type = tool.get_tool_type(user, usable_qualities, src)
 		switch(tool_type)
 			if(QUALITY_BOLT_TURNING)
-				var/list/components = get_all_components()
+				var/list/components = hardware
 				if(components.len)
 					to_chat(user, "Remove all components from \the [src] before disassembling it.")
 					return
@@ -244,32 +245,48 @@
 					return
 
 			if(QUALITY_SCREW_DRIVING)
-				var/list/all_components = get_all_components()
-				if(!all_components.len)
-					to_chat(user, "This device doesn't have any components installed.")
-					return
-				var/list/component_names = list()
-				for(var/obj/item/H in all_components)
-					component_names.Add(H.name)
 				var/list/options = list()
-				for(var/i in component_names)
-					for(var/X in all_components)
-						var/obj/item/TT = X
-						if(TT.name == i)
-							options[i] = image(icon = TT.icon, icon_state = TT.icon_state)
-				var/choice
-				choice = show_radial_menu(user, src, options, radius = 32)
+				options["[casing_open ? "S" : "Uns"]crew casing"] = image(icon = src.icon, icon_state = src.icon_state)
+				if(casing_open)
+					options["Remove component"] = image(icon = tool.icon, icon_state = tool.icon_state)
+
+				var/choice = show_radial_menu(user, src, options, radius = 32)
 				if(!choice)
 					return
-				if(!Adjacent(usr))
+
+				if(choice == "Screw casing" || choice == "Unscrew casing")
+					casing_open = !casing_open
+					to_chat(user, SPAN_NOTICE("You [casing_open ? "unscrew and move out of the way" : "move into place and screw in"] [src]\'s casing panel."))
 					return
-				if(tool.use_tool(user, src, WORKTIME_FAST, QUALITY_SCREW_DRIVING, FAILCHANCE_VERY_EASY, required_stat = STAT_COG))
-					var/obj/item/computer_hardware/H = find_hardware_by_name(choice)
-					if(!H)
+
+				if(choice == "Remove component")
+					if(!casing_open)
+						to_chat(user, SPAN_WARNING("You cannot remove components from \the [src] when the casing panel is secured in the way."))
 						return
-					uninstall_component(H, user)
-					return
-	..()
+					if(!hardware.len)
+						to_chat(user, "This device doesn't have any components installed.")
+						return
+					options = list()
+					var/obj/item/accessed
+					for(var/X in hardware)
+						accessed = isobj(X) ? X : hardware[X]
+						options[accessed] = image(icon = accessed.icon, icon_state = accessed.icon_state)
+					choice = show_radial_menu(user, src, options, radius = 32)
+					if(!choice)
+						return
+					if(!Adjacent(usr))
+						return
+					if(tool.use_tool(user, src, WORKTIME_FAST, QUALITY_SCREW_DRIVING, FAILCHANCE_VERY_EASY, required_stat = STAT_COG))
+						var/obj/item/H = choice
+						if(!H)
+							return
+						uninstall_component(H, user)
+						return
+					else
+						return
+	if(casing_open)
+		try_install_component(W, user)
+
 
 /obj/item/modular_computer/examine(var/mob/user)
 	. = ..()
@@ -277,6 +294,7 @@
 	if(enabled && .)
 		to_chat(user, "The time [stationtime2text()] is displayed in the corner of the screen.")
 
+	var/obj/item/computer_hardware/card_slot/card_slot = hardware["card_slot"]
 	if(card_slot && card_slot.stored_card)
 		to_chat(user, "The [card_slot.stored_card] is inserted into it.")
 
@@ -285,12 +303,13 @@
 	if(!istype(over_object, /obj/screen) && can_interact(M))
 		return attack_self(M)
 
-	if((src.loc == M) && istype(over_object, /obj/screen/inventory/hand) && eject_item(cell, M))
-		cell = null
+	if((src.loc == M) && istype(over_object, /obj/screen/inventory/hand) && eject_item(hardware["cell"], M))
+		hardware["cell"] = null
 		update_icon()
 
 /obj/item/modular_computer/afterattack(atom/target, mob/user, proximity)
 	. = ..()
+	var/obj/item/computer_hardware/scanner/scanner = hardware["scanner"]
 	if(scanner)
 		scanner.do_on_afterattack(user, target, proximity)
 

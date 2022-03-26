@@ -8,88 +8,37 @@
 			to_chat(user, SPAN_WARNING("This computer isn't compatible with [CH]."))
 			return
 
-	if(CH && CH.hardware_size > max_hardware_size)
-		to_chat(user, SPAN_WARNING("This component is too large for \the [src]."))
+	var/capacity_filled = 0
+	for(var/obj/item/fillingitem in hardware)
+		capacity_filled += fillingitem.w_class
+	if(H.w_class > max_hardware_size)
+		to_chat(user, SPAN_WARNING("This [CH ? "component" : "item"] is too large for \the [src]."))
+		return
+	if(capacity_filled+H.w_class > hardware_capacity)
+		to_chat(user, SPAN_WARNING("This item is too large to fit in the remaining space in \the [src]."))
 		return
 
-	// Data disk.
-	if(istype(H, /obj/item/computer_hardware/hard_drive/portable))
-		if(portable_drive)
-			to_chat(user, SPAN_WARNING("This computer's portable drive slot is already occupied by \the [portable_drive]."))
-			return
-		found = TRUE
-		portable_drive = H
+	var/list/indexlist = list("portable_drive","led","hard_drive","network_card","printer","card_slot","cell","processor_unit","ai_slot","tesla_link","scanner","gps_sensor")
+	var/typelist = list("portable_drive" = /obj/item/computer_hardware/hard_drive/portable,"led" = /obj/item/computer_hardware/led,\
+	"hard_drive" = /obj/item/computer_hardware/hard_drive,"network_card" = /obj/item/computer_hardware/network_card,\
+	"printer" = /obj/item/computer_hardware/printer,"card_slot" = /obj/item/computer_hardware/card_slot,\
+	"cell" = /obj/item/cell,"processor_unit" = /obj/item/computer_hardware/processor_unit,"ai_slot" = /obj/item/computer_hardware/ai_slot,\
+	"tesla_link" = /obj/item/computer_hardware/tesla_link,"scanner" = /obj/item/computer_hardware/scanner,"gps_sensor" = /obj/item/computer_hardware/gps_sensor)
+	var/namelist = list("portable_drive" = "portable drive","led" = "LED","hard_drive" = "hard drive","network_card" = "network card",\
+	"printer" = "printer","card_slot" = "card","cell" = "battery","processor_unit" = "processor",\
+	"ai_slot" = "intellicard","tesla_link" = "tesla link","scanner" = "scanner","gps_sensor" = "gps")
 
-	else if(istype(H, /obj/item/computer_hardware/led))
-		if(led)
-			to_chat(user, SPAN_WARNING("This computer's LED slot is already occupied by \the [led]."))
-			return
-		found = TRUE
-		led = H
-	else if(istype(H, /obj/item/computer_hardware/hard_drive))
-		if(hard_drive)
-			to_chat(user, SPAN_WARNING("This computer's hard drive slot is already occupied by \the [hard_drive]."))
-			return
-		found = TRUE
-		hard_drive = H
-	else if(istype(H, /obj/item/computer_hardware/network_card))
-		if(network_card)
-			to_chat(user, SPAN_WARNING("This computer's network card slot is already occupied by \the [network_card]."))
-			return
-		found = TRUE
-		network_card = H
-	else if(istype(H, /obj/item/computer_hardware/printer))
-		if(printer)
-			to_chat(user, SPAN_WARNING("This computer's printer slot is already occupied by \the [printer]."))
-			return
-		found = TRUE
-		printer = H
-	else if(istype(H, /obj/item/computer_hardware/card_slot))
-		if(card_slot)
-			to_chat(user, SPAN_WARNING("This computer's card slot is already occupied by \the [card_slot]."))
-			return
-		found = TRUE
-		card_slot = H
-	else if(istype(H, /obj/item/cell))
-		if(cell)
-			to_chat(user, SPAN_WARNING("This computer's battery slot is already occupied by \the [cell]."))
-			return
-		found = TRUE
-		cell = H
-	else if(istype(H, /obj/item/computer_hardware/processor_unit))
-		if(processor_unit)
-			to_chat(user, SPAN_WARNING("This computer's processor slot is already occupied by \the [processor_unit]."))
-			return
-		found = TRUE
-		processor_unit = H
-	else if(istype(H, /obj/item/computer_hardware/ai_slot))
-		if(ai_slot)
-			to_chat(user, SPAN_WARNING("This computer's intellicard slot is already occupied by \the [ai_slot]."))
-			return
-		found = TRUE
-		ai_slot = H
-	else if(istype(H, /obj/item/computer_hardware/tesla_link))
-		if(tesla_link)
-			to_chat(user, SPAN_WARNING("This computer's tesla link slot is already occupied by \the [tesla_link]."))
-			return
-		found = TRUE
-		tesla_link = H
-	else if(istype(H, /obj/item/computer_hardware/scanner))
-		if(scanner)
-			to_chat(user, SPAN_WARNING("This computer's scanner slot is already occupied by \the [scanner]."))
-			return
-		found = TRUE
-		scanner = H
-		scanner.do_after_install(user, src)
-	else if(istype(H, /obj/item/computer_hardware/gps_sensor))
-		if(gps_sensor)
-			to_chat(user, SPAN_WARNING("This computer's gps slot is already occupied by \the [gps_sensor]."))
-			return
-		found = TRUE
-		gps_sensor = H
-
+	for(var/index in indexlist)
+		if(istype(H, typelist[index]))
+			if(hardware[index])
+				to_chat(user, SPAN_WARNING("This computer's [namelist[index]] slot is already occupied by \the [hardware[index]]."))
+				return
+			found = TRUE
+			hardware[index] = H
+			to_chat(user, SPAN_NOTICE("You slot [H] into \the [src]'s [namelist[index]] slot."))
 	if(!found)
-		return
+		hardware.Add(H)
+		user.visible_message("[user] places [H] into \the [src]\'s casing.",SPAN_NOTICE("You place [H] into \the [src]\'s casing."), null)
 
 	if(insert_item(H, user))
 		if(CH)
@@ -97,16 +46,25 @@
 			if(CH.enabled)
 				CH.enabled()
 			if(istype(CH, /obj/item/computer_hardware/hard_drive) && enabled)
-				autorun_program(portable_drive) // Autorun malware: now in SS13!
+				autorun_program(hardware["portable_drive"]) // Autorun malware: now in SS13!
 		update_verbs()
 
 // Uninstalls component.
 /obj/item/modular_computer/proc/uninstall_component(obj/item/H, mob/living/user)
-	if(!(H in get_all_components()))
-		return
-
+	var/foundit = FALSE
+	if(!(hardware.Find(H)))
+		for(var/totest in hardware)
+			if(isobj(totest))
+				continue
+			else if(hardware[totest] == H)
+				foundit = totest
+				break
+		if(!foundit)
+			return
+	else
+		foundit = H
 	var/critical = FALSE
-	var/obj/item/computer_hardware/to_remove //If a battery, don't try to delete the snowflake vars
+	var/obj/item/computer_hardware/to_remove //If it is not computer hardware don't try to delete the snowflake vars
 
 	if(istype(H, /obj/item/computer_hardware))
 		to_remove = H
@@ -117,31 +75,12 @@
 
 		to_remove.holder2 = null
 
-	if(portable_drive == H)
-		portable_drive = null
-	else if(hard_drive == H)
-		hard_drive = null
-	else if(network_card == H)
-		network_card = null
-	else if(printer == H)
-		printer = null
-	else if(card_slot == H)
-		card_slot = null
-	else if(cell == H)
-		cell = null
-	else if(processor_unit == H)
-		processor_unit = null
-	else if(ai_slot == H)
-		ai_slot = null
-	else if(tesla_link == H)
-		tesla_link = null
-	else if(gps_sensor == H)
-		gps_sensor = null
-	else if(led == H)
-		led = null
-	else if(scanner == H)
+
+	if(istype(H, /obj/item/computer_hardware/scanner))
+		var/obj/item/computer_hardware/scanner/scanner = H
 		scanner.do_before_uninstall()
-		scanner = null
+	hardware.Remove(foundit)
+
 
 	to_chat(user, SPAN_NOTICE("You remove \the [H] from \the [src]."))
 	H.forceMove(drop_location())
@@ -155,24 +94,18 @@
 
 // Returns list of all components
 /obj/item/modular_computer/proc/get_all_components()
-	var/list/all_slots = list(
-		hard_drive, processor_unit,
-		network_card, portable_drive,
-		printer, card_slot, cell,
-		ai_slot, tesla_link, scanner,
-		gps_sensor, led
-		)
-
 	var/list/all_components = list()
-	for(var/slot in all_slots)
-		if(!isnull(slot))
+	for(var/obj/item/computer_hardware/slot in hardware)
+		if(istype(slot) || istype(slot, /obj/item/cell))
 			all_components += slot
 
 	return all_components
 
 // Checks all hardware pieces to determine if name matches, if yes, returns the hardware piece, otherwise returns null
 /obj/item/modular_computer/proc/find_hardware_by_name(name)
-	for(var/c in get_all_components())
+	for(var/c in hardware)
+		if(!isobj(c))
+			c = hardware[c] // from index to value, only some of hardware has custom indexes and that needs to be accounted for
 		var/obj/item/component = c
 		if(component.name == name)
 			return component

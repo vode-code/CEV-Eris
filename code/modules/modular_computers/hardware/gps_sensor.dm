@@ -3,7 +3,7 @@
 	desc = "A module that connects a computer to the ship navigation system, commonly installed in PDAs."
 	power_usage = 5 //W
 	icon_state = "gps_basic"
-	hardware_size = 1
+	w_class = 1
 	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASTIC = 2)
 	matter_reagents = list("silicon" = 10)
 	origin_tech = list(TECH_BLUESPACE = 2)

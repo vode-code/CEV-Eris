@@ -11,7 +11,6 @@
 	var/power_usage = 0 			// If the hardware uses extra power, change this.
 	var/enabled = TRUE				// If the hardware is turned off set this to 0.
 	var/critical = FALSE			// Prevent disabling for important component, like the HDD.
-	var/hardware_size = 1			// Limits which devices can contain this component. 1: Tablets/Laptops/Consoles, 2: Laptops/Consoles, 3: Consoles only
 	var/damage = 0					// Current damage level
 	var/max_damage = 100			// Maximal damage level.
 	var/damage_malfunction = 20		// "Malfunction" threshold. When damage exceeds this value the hardware piece will semi-randomly fail and do !!FUN!! things
@@ -55,7 +54,7 @@
 
 /obj/item/computer_hardware/Initialize()
 	. = ..()
-	w_class = hardware_size
+	w_class = w_class
 	if(istype(loc, /obj/item/modular_computer))
 		holder2 = loc
 

@@ -7,7 +7,7 @@
 	icon_state = "cpuboard"
 	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASTIC = 2)
 	matter_reagents = list("silicon" = 20)
-	hardware_size = 2
+	w_class = 2
 	power_usage = 50
 	critical = TRUE
 	malfunction_probability = 1
@@ -21,7 +21,7 @@
 	desc = "A miniaturised CPU used in most portable devices. It can run up to two programs simultaneously."
 	icon_state = "cpu"
 	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASTIC = 1)
-	hardware_size = 1
+	w_class = 1
 	power_usage = 25
 	max_programs = 2
 
@@ -43,7 +43,7 @@
 	desc = "An advanced CPU for use in portable devices. It can run up to three programs simultaneously."
 	icon_state = "cpu_adv"
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 1)
-	hardware_size = 1
+	w_class = 1
 	power_usage = 40
 	max_programs = 3
 	rarity_value = 12.5
@@ -55,7 +55,7 @@
 	icon_state = "cpuboard_super"
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2, MATERIAL_GLASS = 2, MATERIAL_PLASMA = 2)
 	matter_reagents = list("silicon" = 40)
-	hardware_size = 2
+	w_class = 2
 	power_usage = 250
 	max_programs = 5
 	origin_tech = list(TECH_DATA = 5, TECH_ENGINEERING = 4)
@@ -67,7 +67,7 @@
 	desc = "A photonic CPU prototype for portable devices. It can run up to four programs simultaneously."
 	icon_state = "cpu_super"
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 1, MATERIAL_GLASS = 2, MATERIAL_PLASMA = 2)
-	hardware_size = 1
+	w_class = 1
 	power_usage = 75
 	max_programs = 4
 	rarity_value = 50

@@ -339,13 +339,14 @@
 	download_progress = min(download_progress + netspeed, downloading.size)
 	if(download_progress >= downloading.size)
 		var/obj/item/modular_computer/MC = nano_host()
-		if(!istype(MC) || !MC.hard_drive || !MC.hard_drive.check_functionality())
+		var/obj/item/computer_hardware/hard_drive/hard_drive = MC.hardware["hard_drive"]
+		if(!istype(MC) || !hard_drive || !hard_drive.check_functionality())
 			error = "Error uploading file. Are you using a functional and NTOSv2-compliant device?"
 			downloading = null
 			download_progress = 0
 			return 1
 
-		if(MC.hard_drive.store_file(downloading))
+		if(hard_drive.store_file(downloading))
 			error = "File successfully downloaded to local device."
 		else
 			error = "Error saving file: I/O Error: The hard drive may be full or nonfunctional."
@@ -549,8 +550,8 @@
 	if(href_list["save"])
 		// Fully dependant on modular computers here.
 		var/obj/item/modular_computer/MC = nano_host()
-
-		if(!istype(MC) || !MC.hard_drive || !MC.hard_drive.check_functionality())
+		var/obj/item/computer_hardware/hard_drive/hard_drive = MC.hardware["hard_drive"]
+		if(!istype(MC) || !hard_drive || !hard_drive.check_functionality())
 			error = "Error exporting file. Are you using a functional and NTOS-compliant device?"
 			return 1
 
@@ -563,7 +564,7 @@
 		if(!istype(mail))
 			return 1
 		mail.filename = filename
-		if(!MC.hard_drive || !MC.hard_drive.store_file(mail))
+		if(!hard_drive || !hard_drive.store_file(mail))
 			error = "Internal I/O error when writing file, the hard drive may be full."
 		else
 			error = "Email exported successfully"
@@ -572,13 +573,14 @@
 	if(href_list["addattachment"])
 		var/obj/item/modular_computer/MC = nano_host()
 		msg_attachment = null
+		var/obj/item/computer_hardware/hard_drive/hard_drive = MC.hardware["hard_drive"]
 
-		if(!istype(MC) || !MC.hard_drive || !MC.hard_drive.check_functionality())
+		if(!istype(MC) || !hard_drive || !hard_drive.check_functionality())
 			error = "Error uploading file. Are you using a functional and NTOSv2-compliant device?"
 			return 1
 
 		var/list/filenames = list()
-		for(var/datum/computer_file/CF in MC.hard_drive.stored_files)
+		for(var/datum/computer_file/CF in hard_drive.stored_files)
 			if(CF.unsendable)
 				continue
 			filenames.Add(CF.filename)
@@ -587,11 +589,11 @@
 		if(!picked_file)
 			return 1
 
-		if(!istype(MC) || !MC.hard_drive || !MC.hard_drive.check_functionality())
+		if(!istype(MC) || !hard_drive || !hard_drive.check_functionality())
 			error = "Error uploading file. Are you using a functional and NTOSv2-compliant device?"
 			return 1
 
-		for(var/datum/computer_file/CF in MC.hard_drive.stored_files)
+		for(var/datum/computer_file/CF in hard_drive.stored_files)
 			if(CF.unsendable)
 				continue
 			if(CF.filename == picked_file)
@@ -613,7 +615,8 @@
 		if(!current_account || !current_message || !current_message.attachment)
 			return 1
 		var/obj/item/modular_computer/MC = nano_host()
-		if(!istype(MC) || !MC.hard_drive || !MC.hard_drive.check_functionality())
+		var/obj/item/computer_hardware/hard_drive/hard_drive = MC.hardware["hard_drive"]
+		if(!istype(MC) || !hard_drive || !hard_drive.check_functionality())
 			error = "Error downloading file. Are you using a functional and NTOSv2-compliant device?"
 			return 1
 

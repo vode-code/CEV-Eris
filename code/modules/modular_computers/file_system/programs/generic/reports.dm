@@ -26,7 +26,7 @@
 			if(selected_report)
 				data["report_data"] = selected_report.generate_nano_data(get_access(user))
 			data["view_only"] = can_view_only
-			data["printer"] = program.computer.printer
+			data["printer"] = program.computer.hardware["printer"]
 		if(REPORTS_DOWNLOAD)
 			var/list/L = list()
 			for(var/datum/computer_file/report/report in ntnet_global.fetch_reports(get_access(user)))
@@ -62,17 +62,18 @@
 	saved_report = null
 
 /datum/nano_module/program/reports/proc/save_report(mob/user, save_as)
-	if(!program.computer || !program.computer.hard_drive)
+	var/obj/item/computer_hardware/hard_drive/drive = program.computer?.hardware["hard_drive"]
+	if(!program.computer || !drive)
 		to_chat(user, "Unable to find hard drive.")
 		return
 	selected_report.rename_file()
 	if(!save_as)
-		program.computer.hard_drive.remove_file(saved_report)
-	if(!program.computer.hard_drive.try_store_file(selected_report))
+		drive.remove_file(saved_report)
+	if(!drive.try_store_file(selected_report))
 		to_chat(user, "Error storing file. Please check your hard drive.")
-		program.computer.hard_drive.store_file(saved_report) //Does nothing if already saved.
+		drive.store_file(saved_report) //Does nothing if already saved.
 		return
-	program.computer.hard_drive.store_file(selected_report)
+	drive.store_file(selected_report)
 	if(!save_as)
 		qdel(saved_report)
 	saved_report = selected_report
@@ -80,11 +81,12 @@
 	to_chat(user, "The report has been saved as [saved_report.filename].[saved_report.filetype]")
 
 /datum/nano_module/program/reports/proc/load_report(mob/user)
-	if(!program.computer || !program.computer.hard_drive)
+	var/obj/item/computer_hardware/hard_drive/drive = program.computer?.hardware["hard_drive"]
+	if(!program.computer || !drive)
 		to_chat(user, "Unable to find hard drive.")
 		return
 	var/choices = list()
-	for(var/datum/computer_file/report/R in program.computer.hard_drive.stored_files)
+	for(var/datum/computer_file/report/R in drive.stored_files)
 		choices["[R.filename].[R.filetype]"] = R
 	var/choice = input(user, "Which report would you like to load?", "Loading Report") as null|anything in choices
 	if(choice in choices)
@@ -150,17 +152,19 @@
 		field.ask_value(user) //Handles the remaining IO.
 		return 1
 	if(href_list["print"])
-		if(!selected_report || !program.computer || !program.computer.printer)
+		var/obj/item/computer_hardware/printer/printer = program.computer?.hardware["printer"]
+		if(!selected_report || !program.computer || !printer)
 			return 1
 		if(!selected_report.verify_access(get_access(user)))
 			return 1
 		var/with_fields = text2num(href_list["print_mode"])
 		var/text = selected_report.generate_pencode(get_access(user), with_fields)
-		if(!program.computer.printer.print_text(text, selected_report.display_name()))
+		if(!printer.print_text(text, selected_report.display_name()))
 			to_chat(user, "Hardware error: Printer was unable to print the file. It may be out of paper.")
 		return 1
 	if(href_list["export"])
-		if(!selected_report || !program.computer || !program.computer.hard_drive)
+		var/obj/item/computer_hardware/hard_drive/drive = program.computer?.hardware["hard_drive"]
+		if(!selected_report || !program.computer || !drive)
 			return 1
 		if(!selected_report.verify_access(get_access(user)))
 			return 1
@@ -168,7 +172,7 @@
 		selected_report.rename_file()
 		file.stored_data = selected_report.generate_pencode(get_access(user), no_html = 1) //TXT files can't have html; they use pencode only.
 		file.filename = selected_report.filename
-		to_chat(user, (program.computer.hard_drive.store_file(file) ? "The report has been exported as [file.filename].[file.filetype]" : "Error storing file. Please check your hard drive."))
+		to_chat(user, (drive.store_file(file) ? "The report has been exported as [file.filename].[file.filetype]" : "Error storing file. Please check your hard drive."))
 		return 1
 
 	if(href_list["download"])

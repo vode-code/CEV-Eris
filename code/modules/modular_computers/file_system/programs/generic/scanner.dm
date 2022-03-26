@@ -15,18 +15,20 @@
 	var/scan_file_type = /datum/computer_file/data/text		//The type of file the data will be saved to.
 
 /datum/computer_file/program/scanner/proc/connect_scanner()	//If already connected, will reconnect.
-	if(!computer || !computer.scanner)
+	var/obj/item/computer_hardware/scanner/scanner = computer?.hardware["scanner"]
+	if(!computer || !scanner)
 		return 0
-	if(istype(src, computer.scanner.driver_type))
+	if(istype(src, scanner.driver_type))
 		using_scanner = 1
-		computer.scanner.driver = src
+		scanner.driver = src
 		return 1
 	return 0
 
 /datum/computer_file/program/scanner/proc/disconnect_scanner()
 	using_scanner = 0
-	if(computer && computer.scanner && (src == computer.scanner.driver) )
-		computer.scanner.driver = null
+	var/obj/item/computer_hardware/scanner/scanner = computer?.hardware["scanner"]
+	if(computer && scanner && (src == scanner.driver) )
+		scanner.driver = null
 	data_buffer = null
 	return 1
 
@@ -38,15 +40,16 @@
 	return 1
 
 /datum/computer_file/program/scanner/proc/check_scanning()
-	if(!computer || !computer.scanner)
+	var/obj/item/computer_hardware/scanner/scanner = computer?.hardware["scanner"]
+	if(!computer || !scanner)
 		return 0
-	if(!computer.scanner.can_run_scan)
+	if(!scanner.can_run_scan)
 		return 0
-	if(!computer.scanner.check_functionality())
+	if(!scanner.check_functionality())
 		return 0
 	if(!using_scanner)
 		return 0
-	if(src != computer.scanner.driver)
+	if(src != scanner.driver)
 		return 0
 	return 1
 
@@ -64,7 +67,8 @@
 
 	if(href_list["scan"])
 		if(check_scanning())
-			computer.scanner.run_scan(usr, src)
+			var/obj/item/computer_hardware/scanner/scanner = computer?.hardware["scanner"]
+			scanner.run_scan(usr, src)
 		return 1
 
 	if(href_list["save"])
@@ -87,11 +91,12 @@
 	var/datum/computer_file/program/scanner/prog = program
 	if(!prog.computer)
 		return
-	if(prog.computer.scanner)
-		data["scanner_name"] = prog.computer.scanner.name
-		data["scanner_enabled"] = prog.computer.scanner.enabled
-		data["can_view_scan"] = prog.computer.scanner.can_view_scan
-		data["can_save_scan"] = (prog.computer.scanner.can_save_scan && prog.data_buffer)
+	var/obj/item/computer_hardware/scanner/scanner = prog.computer?.hardware["scanner"]
+	if(scanner)
+		data["scanner_name"] = scanner.name
+		data["scanner_enabled"] = scanner.enabled
+		data["can_view_scan"] = scanner.can_view_scan
+		data["can_save_scan"] = (scanner.can_save_scan && prog.data_buffer)
 	data["using_scanner"] = prog.using_scanner
 	data["check_scanning"] = prog.check_scanning()
 	data["data_buffer"] = pencode2html(prog.data_buffer)

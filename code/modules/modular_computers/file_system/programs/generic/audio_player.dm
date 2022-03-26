@@ -121,10 +121,11 @@
 		if(!selected_audio)
 			error = "Error: No file loaded."
 			return TRUE
-		if(!computer.printer)
+		var/obj/item/computer_hardware/printer/printer = computer.hardware["printer"]
+		if(!printer)
 			error = "Missing Hardware: Your computer does not have the required hardware to complete this operation."
 			return TRUE
-		if(!computer.printer.print_text(selected_audio.transcribed ? selected_audio.stored_data : "Please press the \"Transcribe\" button to transcribe the audio file."))
+		if(!printer.print_text(selected_audio.transcribed ? selected_audio.stored_data : "Please press the \"Transcribe\" button to transcribe the audio file."))
 			error = "Hardware error: Printer was unable to print the file. It may be out of paper."
 			return TRUE
 
@@ -148,10 +149,10 @@
 
 	if(PRG.browsing)
 		data["browsing"] = PRG.browsing
-		if(!PRG.computer || !PRG.computer.hard_drive)
+		if(!PRG.computer || !PRG.computer.hardware["hard_drive"])
 			data["error"] = "I/O ERROR: Unable to access hard drive."
 		else
-			HDD = PRG.computer.hard_drive
+			HDD = PRG.computer.hardware["hard_drive"]
 			var/list/files[0]
 			for(var/datum/computer_file/F in HDD.stored_files)
 				if(F.filetype == "AUD")
@@ -161,7 +162,7 @@
 					)))
 			data["files"] = files
 
-			RHDD = PRG.computer.portable_drive
+			RHDD = PRG.computer.hardware["portable_drive"]
 			if(RHDD)
 				data["usbconnected"] = TRUE
 				var/list/usbfiles[0]

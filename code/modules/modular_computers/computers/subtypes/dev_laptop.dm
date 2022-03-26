@@ -10,6 +10,7 @@
 	base_idle_power_usage = 25
 	base_active_power_usage = 200
 	max_hardware_size = 2
+	hardware_capacity = 26
 	screen_light_strength = 3.8
 	screen_light_range = 1.7
 	max_damage = 200

@@ -7,7 +7,7 @@ var/global/ntnet_card_uid = 1
 	origin_tech = list(TECH_DATA = 2, TECH_ENGINEERING = 1)
 	matter_reagents = list("silicon" = 20)
 	icon_state = "netcard"
-	hardware_size = 1
+	w_class = 1
 	rarity_value = 8.33
 	var/identification_id			// Identification ID. Technically MAC address of this device. Can't be changed by user.
 	var/identification_string = ""	// Identification string, technically nickname seen in the network. Can be set by user.
@@ -79,7 +79,7 @@ var/global/ntnet_card_uid = 1
 	origin_tech = list(TECH_DATA = 4, TECH_ENGINEERING = 2)
 	power_usage = 30 // Better range but higher power usage.
 	icon_state = "netcard_adv"
-	hardware_size = 1
+	w_class = 1
 	price_tag = 100
 	rarity_value = 16.66
 
@@ -90,7 +90,7 @@ var/global/ntnet_card_uid = 1
 	origin_tech = list(TECH_DATA = 5, TECH_ENGINEERING = 3)
 	power_usage = 100 // Better range but higher power usage.
 	icon_state = "netcard_ethernet"
-	hardware_size = 3
+	w_class = 3
 
 
 // Returns a string identifier of this network card

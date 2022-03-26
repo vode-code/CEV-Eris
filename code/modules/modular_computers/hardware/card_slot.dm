@@ -3,7 +3,7 @@
 	desc = "Slot that allows this computer to read and write data on ID cards. Necessary for some programs to run properly."
 	power_usage = 10 //W
 	icon_state = "cardreader"
-	hardware_size = 1
+	w_class = 1
 	origin_tech = list(TECH_DATA = 2)
 	usage_flags = PROGRAM_ALL
 	rarity_value = 5.55

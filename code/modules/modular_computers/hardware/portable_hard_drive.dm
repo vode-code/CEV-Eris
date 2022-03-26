@@ -6,7 +6,7 @@
 	icon = 'icons/obj/discs.dmi'
 	icon_state = "blue"
 	critical = FALSE
-	hardware_size = 1
+	w_class = 1
 	power_usage = 30
 	max_capacity = 64
 	default_files = list()

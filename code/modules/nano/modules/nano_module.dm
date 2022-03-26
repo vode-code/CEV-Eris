@@ -156,11 +156,12 @@
 /datum/nano_module/proc/print_text(var/text, var/mob/user)
 	var/obj/item/modular_computer/MC = nano_host()
 	if(istype(MC))
-		if(!MC.printer)
+		var/obj/item/computer_hardware/printer/printer = MC.hardware["printer"]
+		if(!printer)
 			to_chat(user, "Error: No printer detected. Unable to print document.")
 			return
 
-		if(!MC.printer.print_text(text))
+		if(!printer.print_text(text))
 			to_chat(user, "Error: Printer was unable to print the document. It may be out of paper.")
 	else
 		to_chat(user, "Error: Unable to detect compatible printer interface. Are you running NTOSv2 compatible system?")

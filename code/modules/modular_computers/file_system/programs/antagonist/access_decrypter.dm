@@ -31,8 +31,8 @@
 	. = ..()
 	if(!running)
 		return
-	var/obj/item/computer_hardware/processor_unit/CPU = computer.processor_unit
-	var/obj/item/computer_hardware/card_slot/RFID = computer.card_slot
+	var/obj/item/computer_hardware/processor_unit/CPU = computer.hardware["processor_unit"]
+	var/obj/item/computer_hardware/card_slot/RFID = computer.hardware["card_slot"]
 	if(!istype(CPU) || !CPU.check_functionality() || !istype(RFID) || !RFID.check_functionality())
 		message = "A fatal hardware error has been detected."
 		return
@@ -50,7 +50,8 @@
 			target_access = get_access_by_id(pick(valid_access_values))
 		RFID.stored_card.access |= target_access.id
 		if(ntnet_global.intrusion_detection_enabled && !prob(get_sneak_chance()))
-			ntnet_global.add_log("IDS WARNING - Unauthorised access to primary keycode database from device: [computer.network_card.get_network_tag()]  - downloaded access codes for: [target_access.desc].")
+			var/obj/item/computer_hardware/network_card/netaccess = computer.hardware["network_card"]
+			ntnet_global.add_log("IDS WARNING - Unauthorised access to primary keycode database from device: [netaccess.get_network_tag()]  - downloaded access codes for: [target_access.desc].")
 			ntnet_global.intrusion_detection_alarm = 1
 		var/datum/access/cloned_access = target_access
 		reset()
@@ -65,8 +66,8 @@
 	if(href_list["PRG_execute"])
 		if(running)
 			return 1
-		var/obj/item/computer_hardware/processor_unit/CPU = computer.processor_unit
-		var/obj/item/computer_hardware/card_slot/RFID = computer.card_slot
+		var/obj/item/computer_hardware/processor_unit/CPU = computer.hardware["processor_unit"]
+		var/obj/item/computer_hardware/card_slot/RFID = computer.hardware["card_slot"]
 		if(!istype(CPU) || !CPU.check_functionality() || !istype(RFID) || !RFID.check_functionality())
 			message = "A fatal hardware error has been detected."
 			return
@@ -87,7 +88,8 @@
 		running = TRUE
 		operator_skill = get_operator_skill(usr, STAT_COG)
 		if(ntnet_global.intrusion_detection_enabled && !prob(get_sneak_chance()))
-			ntnet_global.add_log("IDS WARNING - Unauthorised access attempt to primary keycode database from device: [computer.network_card.get_network_tag()]")
+			var/obj/item/computer_hardware/network_card/netaccess = computer.hardware["network_card"]
+			ntnet_global.add_log("IDS WARNING - Unauthorised access attempt to primary keycode database from device: [netaccess.get_network_tag()]")
 			ntnet_global.intrusion_detection_alarm = 1
 		return 1
 
@@ -96,7 +98,8 @@
 
 /datum/computer_file/program/access_decrypter/proc/get_speed()
 	var/skill_speed_modifier = max(100 + (operator_skill - STAT_LEVEL_BASIC) * 2, 25) / 100
-	return computer.processor_unit.max_programs * skill_speed_modifier
+	var/obj/item/computer_hardware/processor_unit/temp = computer.hardware["processor_unit"]
+	. = temp.max_programs * skill_speed_modifier
 
 /datum/nano_module/program/access_decrypter
 	name = "Access Decrypter"
@@ -110,6 +113,7 @@
 		return
 	data = PRG.get_header_data()
 
+	var/obj/item/computer_hardware/card_slot/card = program.computer.hardware["card_slot"]
 	if(PRG.message)
 		data["message"] = PRG.message
 	else if(PRG.running)
@@ -119,9 +123,8 @@
 		// The UI template uses this to draw a block of 1s and 0s, the more 1s the closer you are to completion
 		// Combined with UI updates this adds quite nice effect to the UI
 		data["completion_fraction"] = PRG.progress / PRG.target_progress
-
-	else if(program.computer.card_slot && program.computer.card_slot.stored_card)
-		var/obj/item/card/id/id_card = program.computer.card_slot.stored_card
+	else if(card && card.stored_card)
+		var/obj/item/card/id/id_card = card.stored_card
 		var/list/regions = list()
 		for(var/region in ACCESS_REGION_MIN to ACCESS_REGION_MAX)
 			var/list/accesses = list()

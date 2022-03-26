@@ -11,6 +11,7 @@
 	base_idle_power_usage = 100
 	base_active_power_usage = 500
 	max_hardware_size = 3
+	hardware_capacity = 39
 	steel_sheet_cost = 20
 	screen_light_strength = 2.8
 	screen_light_range = 2.1

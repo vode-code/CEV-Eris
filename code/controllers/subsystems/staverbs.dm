@@ -187,13 +187,16 @@ SUBSYSTEM_DEF(statverbs)
 	minimal_stat  = STAT_LEVEL_ADEPT
 
 /datum/statverb/fix_computer/action(mob/user, obj/item/modular_computer/target)
-	if(target.hard_drive.damage < 100)
-		user.visible_message(
-			SPAN_WARNING("[target] doesn't need repairs!")
+	var/obj/item/computer_hardware/hard_drive/target_hard_drive = target.hardware["hard_drive"]
+	if(!istype(target_hard_drive))
+		to_chat(user, SPAN_WARNING("[target] has no hard drive to repair!"))
+		return
+	if(target_hard_drive.damage < 100)
+		to_chat(user, SPAN_WARNING("[target] doesn't need repairs!")
 		)
 		return
 	var/timer = 160 - (user.stats.getStat(STAT_COG) * 2)
-	if(target.hard_drive.damage == 100)
+	if(target_hard_drive.damage == 100)
 		var/datum/repeating_sound/keyboardsound = new(30, timer, 0.15, target, "keyboard", 80, 1)
 		user.visible_message(
 			SPAN_NOTICE("You begin repairing [target]."),
@@ -201,8 +204,8 @@ SUBSYSTEM_DEF(statverbs)
 		if(do_mob(user, target, timer))
 			keyboardsound.stop()
 			keyboardsound = null
-			target.hard_drive.damage = 0
-			target.hard_drive.install_default_files()
+			target_hard_drive.damage = 0
+			target_hard_drive.install_default_files()
 			target.update_icon()
 			user.visible_message(
 				SPAN_NOTICE("You manage to repair [target], but the harddrive was corrupted! Only default programs were restored."),

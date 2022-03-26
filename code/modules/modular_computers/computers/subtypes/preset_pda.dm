@@ -1,21 +1,22 @@
 /obj/item/modular_computer/pda/install_default_hardware()
 	..()
-	network_card = new network_card_type(src)
-	hard_drive = new hard_drive_type(src)
-	processor_unit = new processor_unit_type(src)
-	card_slot = new /obj/item/computer_hardware/card_slot(src)
-	cell = new /obj/item/cell/small/moebius/pda(src)
-	gps_sensor= new /obj/item/computer_hardware/gps_sensor(src)
-	led = new /obj/item/computer_hardware/led(src)
+	hardware["network_card"] = new network_card_type(src)
+	hardware["hard_drive"] = new hard_drive_type(src)
+	hardware["processor_unit"] = new processor_unit_type(src)
+	hardware["card_slot"] = new /obj/item/computer_hardware/card_slot(src)
+	hardware["cell"] = new /obj/item/cell/small/moebius/pda(src)
+	hardware["gps_sensor"] = new /obj/item/computer_hardware/gps_sensor(src)
+	hardware["led"] = new /obj/item/computer_hardware/led(src)
 	if(scanner_type)
-		scanner = new scanner_type(src)
+		hardware["scanner"] = new scanner_type(src)
 	if(tesla_link_type)
-		tesla_link = new tesla_link_type(src)
+		hardware["tesla_link"] = new tesla_link_type(src)
 
 
 /obj/item/modular_computer/pda/install_default_programs()
 	..()
 
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new /datum/computer_file/program/chatclient())
 	hard_drive.store_file(new /datum/computer_file/program/email_client())
 	hard_drive.store_file(new /datum/computer_file/program/crew_manifest())
@@ -46,6 +47,7 @@
 
 /obj/item/modular_computer/pda/moebius/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new /datum/computer_file/program/signaller)
 	hard_drive.store_file(new /datum/computer_file/program/chem_catalog)
 
@@ -96,6 +98,7 @@
 
 /obj/item/modular_computer/pda/heads/cmo/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new /datum/computer_file/program/chem_catalog())
 
 /obj/item/modular_computer/pda/heads/rd
@@ -144,6 +147,7 @@
 
 /obj/item/modular_computer/pda/club_worker/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new /datum/computer_file/program/drink_catalog())
 
 

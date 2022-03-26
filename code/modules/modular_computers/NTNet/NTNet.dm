@@ -64,8 +64,9 @@ var/global/datum/ntnet/ntnet_global = new()
 				break
 
 /datum/ntnet/proc/get_computer_by_nid(var/NID)
-	for(var/obj/item/modular_computer/comp in SSobj.processing)
-		if(comp && comp.network_card && comp.network_card.identification_id == NID)
+	for(var/obj/item/modular_computer/comp in GLOB.computers)
+		var/obj/item/computer_hardware/network_card/netaccess = comp.hardware["network_card"]
+		if(comp && netaccess && netaccess.identification_id == NID)
 			return comp
 
 /datum/ntnet/proc/check_banned(var/NID)

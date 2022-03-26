@@ -18,6 +18,7 @@
 
 	// We are still here, that means there is no program loaded. Load the BIOS/ROM/OS/whatever you want to call it.
 	// This screen simply lists available programs and user may select them.
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	if(!hard_drive || !hard_drive.stored_files || !hard_drive.stored_files.len)
 		visible_message("\The [src] beeps three times, it's screen displaying \"DISK ERROR\" warning.")
 		return // No HDD, No HDD files list or no stored files. Something is very broken.
@@ -26,6 +27,7 @@
 
 	data["hard_drive"] = get_program_data(hard_drive)
 
+	var/obj/item/computer_hardware/hard_drive/portable/portable_drive = hardware["portable_drive"]
 	if(portable_drive)
 		data["portable_drive"] = get_program_data(portable_drive)
 
@@ -75,7 +77,7 @@
 
 	if(href_list["PC_killprogram"])
 		var/prog_name = href_list["PC_killprogram"]
-		var/obj/item/computer_hardware/hard_drive/prog_disk = locate(href_list["disk"]) in src
+		var/obj/item/computer_hardware/hard_drive/prog_disk = hardware.Find(href_list["disk"])
 		if(!prog_disk)
 			return 1
 
@@ -94,7 +96,7 @@
 		return run_program(href_list["PC_runprogram"], prog_disk)
 
 	if(href_list["PC_setautorun"])
-		if(!hard_drive)
+		if(!hardware["hard_drive"])
 			return
 		set_autorun(href_list["PC_setautorun"])
 	if(href_list["PC_terminal"])
@@ -133,6 +135,7 @@
 /obj/item/modular_computer/proc/get_header_data()
 	var/list/data = list()
 
+	var/obj/item/cell/cell = hardware["cell"]
 	if(cell)
 		switch(cell.percent())
 			if(80 to 200) // 100 should be maximal but just in case..
@@ -154,13 +157,16 @@
 		data["PC_batterypercent"] = "N/C"
 		data["PC_showbatteryicon"] = FALSE
 
+	var/obj/item/computer_hardware/led/led = hardware["led"]
 	if(led)
 		data["PC_light_name"] = led.name
 		data["PC_light_on"] = led.enabled
 
+	var/obj/item/computer_hardware/tesla_link/tesla_link = hardware["tesla_link"]
 	if(tesla_link && tesla_link.enabled && apc_powered)
 		data["PC_apclinkicon"] = "charging.gif"
 
+	var/obj/item/computer_hardware/network_card/network_card = hardware["network_card"]
 	if(network_card && network_card.is_banned())
 		data["PC_ntneticon"] = "sig_warning.gif"
 	else
@@ -174,6 +180,7 @@
 			if(3)
 				data["PC_ntneticon"] = "sig_lan.gif"
 
+	var/obj/item/computer_hardware/gps_sensor/gps_sensor = hardware["gps_sensor"]
 	if(gps_sensor)
 		data["has_gps"] = TRUE
 		if (gps_sensor.check_functionality())

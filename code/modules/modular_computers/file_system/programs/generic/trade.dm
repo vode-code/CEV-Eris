@@ -56,7 +56,8 @@
 		return TRUE
 
 	if(href_list["PRG_account"])
-		var/acc_num = input("Enter account number", "Account linking", computer?.card_slot?.stored_card?.associated_account_number) as num|null
+		var/obj/item/computer_hardware/card_slot/card_slot = computer?.hardware["card_slot"]
+		var/acc_num = input("Enter account number", "Account linking", card_slot?.stored_card?.associated_account_number) as num|null
 		if(!acc_num)
 			return
 
@@ -64,7 +65,7 @@
 		if(!acc_pin)
 			return
 
-		var/card_check = computer?.card_slot?.stored_card?.associated_account_number == acc_num
+		var/card_check = card_slot?.stored_card?.associated_account_number == acc_num
 		var/datum/money_account/A = attempt_account_access(acc_num, acc_pin, card_check ? 2 : 1, TRUE)
 		if(!A)
 			to_chat(usr, SPAN_WARNING("Unable to link account: access denied."))

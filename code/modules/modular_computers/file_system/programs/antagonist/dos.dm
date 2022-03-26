@@ -92,16 +92,18 @@
 		target.dos_sources.Add(src)
 		operator_skill = get_operator_skill(usr, STAT_COG)
 
-		var/list/sources_to_show = list(computer.network_card.get_network_tag())
+		var/obj/item/computer_hardware/network_card/netaccess = computer.hardware["network_card"]
+		var/list/sources_to_show = list(netaccess.get_network_tag())
 		var/extra_to_show = 2 * max(operator_skill - STAT_LEVEL_ADEPT, 0)
 		if(extra_to_show)
 			var/list/candidates = list()
-			for(var/obj/item/modular_computer/C in SSobj.processing) // Apparently the only place these are stored.
+			for(var/obj/item/modular_computer/C in GLOB.computers) // if there is no other place they are stored MAKE ONE, NANAKO!
 				if(C.z in GetConnectedZlevels(computer.z))
 					candidates += C
 			for(var/i = 1, i <= extra_to_show, i++)
 				var/obj/item/modular_computer/C = pick_n_take(candidates)
-				sources_to_show += C.network_card.get_network_tag()
+				var/obj/item/computer_hardware/network_card/Cnetaccess = C.hardware["network_card"]
+				sources_to_show += Cnetaccess.get_network_tag()
 
 		if(ntnet_global.intrusion_detection_enabled)
 			ntnet_global.add_log("IDS WARNING - Excess traffic flood targeting relay [target.uid] detected from [length(sources_to_show)] device\s: [english_list(sources_to_show)]")

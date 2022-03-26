@@ -25,7 +25,8 @@
 	if(!..())
 		return FALSE
 
-	if(!hardware?.network_card.check_functionality() || hardware.network_card.ethernet)
+	var/obj/item/computer_hardware/network_card/netaccess = hardware?.hardware["network_card"]
+	if(!netaccess.check_functionality() || netaccess.ethernet)
 		if(loud)
 			to_chat(user, SPAN_WARNING("Hardware Error - Wireless network card required"))
 		return FALSE
@@ -35,7 +36,8 @@
 /datum/computer_file/program/signaller/ui_data()
 	var/list/data = computer.get_header_data()
 
-	data["freq"] = computer?.network_card.frequency
+	var/obj/item/computer_hardware/network_card/netaccess = computer?.hardware["network_card"]
+	data["freq"] = netaccess.frequency
 	data["code"] = code
 	data["max_saved"] = max_saved
 	data["saved_signals"] = saved_signals
@@ -57,12 +59,13 @@
 	if(..())
 		return 1
 
-	if(!computer?.network_card.check_functionality())
+	var/obj/item/computer_hardware/network_card/netaccess = computer?.hardware["network_card"]
+	if(!netaccess.check_functionality())
 		to_chat(usr, SPAN_WARNING("Hardware Error - Network card failure"))
 		return 1
 
 	if(href_list["signal"])
-		computer.network_card.signal(text2num(href_list["freq"]), text2num(href_list["code"]))
+		netaccess.signal(text2num(href_list["freq"]), text2num(href_list["code"]))
 		return 1
 
 	if(href_list["change_code"])
@@ -76,22 +79,22 @@
 		return 1
 
 	if(href_list["change_freq"])
-		computer.network_card.set_frequency(computer.network_card.frequency + text2num(href_list["change_freq"]))
+		netaccess.set_frequency(netaccess.frequency + text2num(href_list["change_freq"]))
 		return 1
 
 	if(href_list["edit_freq"])
-		var/input_freq = input("Enter signal frequency ([RADIO_LOW_FREQ]-[RADIO_HIGH_FREQ]):", "Signal parameters", computer.network_card.frequency) as num|null
-		if(input_freq && CanUseTopic(usr) && computer && computer.network_card)
+		var/input_freq = input("Enter signal frequency ([RADIO_LOW_FREQ]-[RADIO_HIGH_FREQ]):", "Signal parameters", netaccess.frequency) as num|null
+		if(input_freq && CanUseTopic(usr) && computer && netaccess)
 			if(input_freq < RADIO_LOW_FREQ) // A decimal input maybe?
 				input_freq *= 10
 
-			computer.network_card.set_frequency(round(input_freq))
+			netaccess.set_frequency(round(input_freq))
 		return 1
 
 	if(href_list["save_signal"])
 		if(length(saved_signals) >= max_saved)
 			return 1
-		saved_signals.Add(list(list("freq"=computer.network_card.frequency, "code"=code)))
+		saved_signals.Add(list(list("freq"=netaccess.frequency, "code"=code)))
 		return 1
 
 	if(href_list["delete_signal"])

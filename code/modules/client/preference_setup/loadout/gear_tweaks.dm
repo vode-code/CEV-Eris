@@ -311,23 +311,24 @@
 		return
 	if(ValidProcessors[metadata[1]])
 		var/t = ValidProcessors[metadata[1]]
-		I.processor_unit = new t(I)
+		I.hardware["processor_unit"] = new t(I)
 	if(ValidBatteries[metadata[2]])
 		var/t = ValidBatteries[metadata[2]]
-		I.cell = new t(I)
-		I.cell.charge = I.cell.maxcharge
+		var/obj/item/cell/newcell = new t(I)
+		I.hardware["cell"] = newcell
+		newcell.charge = newcell.maxcharge
 	if(ValidHardDrives[metadata[3]])
 		var/t = ValidHardDrives[metadata[3]]
-		I.hard_drive = new t(I)
+		I.hardware["hard_drive"] = new t(I)
 	if(ValidNetworkCards[metadata[4]])
 		var/t = ValidNetworkCards[metadata[4]]
-		I.network_card = new t(I)
+		I.hardware["network_card"] = new t(I)
 	if(ValidPrinters[metadata[5]])
 		var/t = ValidPrinters[metadata[5]]
-		I.printer = new t(I)
+		I.hardware["printer"] = new t(I)
 	if(ValidCardSlots[metadata[6]])
 		var/t = ValidCardSlots[metadata[6]]
-		I.card_slot = new t(I)
+		I.hardware["card_slot"] = new t(I)
 	if(ValidTeslaLinks[metadata[7]])
 		var/t = ValidTeslaLinks[metadata[7]]
-		I.tesla_link = new t(I)
+		I.hardware["tesla_link"] = new t(I)

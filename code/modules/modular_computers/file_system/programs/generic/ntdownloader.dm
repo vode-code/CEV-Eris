@@ -58,7 +58,8 @@
 	if(PRG.available_on_syndinet && !computer_emagged)
 		return 0
 
-	if(!computer || !computer.hard_drive || !computer.hard_drive.try_store_file(PRG))
+	var/obj/item/computer_hardware/hard_drive/HDD = computer?.hardware["hard_drive"]
+	if(!computer || !HDD || !HDD.try_store_file(PRG))
 		return 0
 
 	return 1
@@ -81,8 +82,9 @@
 
 	generate_network_log("[abort ? "Aborted" : "Completed"] download of file [file_info].")
 
+	var/obj/item/computer_hardware/hard_drive/HDD = computer?.hardware["hard_drive"]
 	if(!abort)
-		if(!computer?.hard_drive?.store_file(downloaded_file))
+		if(!HDD?.store_file(downloaded_file))
 			// The download failed
 			downloaderror = {"I/O ERROR - Unable to save file.
 			Check whether you have enough free space on your hard drive and whether your hard drive is properly connected."}
@@ -172,10 +174,11 @@
 		data["downloadcompletion"] = round(prog.download_completion, 0.01)
 
 	data["download_paused"] = prog.download_paused
-	data["disk_size"] = my_computer.hard_drive.max_capacity
-	data["disk_used"] = my_computer.hard_drive.used_capacity
+	var/obj/item/computer_hardware/hard_drive/MHDD = my_computer.hardware["hard_drive"]
+	data["disk_size"] = MHDD.max_capacity
+	data["disk_used"] = MHDD.used_capacity
 
-	var/obj/item/computer_hardware/hard_drive/HDD = program.computer.hard_drive
+	var/obj/item/computer_hardware/hard_drive/HDD = program.computer.hardware["hard_drive"]
 	if(!HDD)
 		return 1
 	var/list/datum/computer_file/program/installed_programs = list()

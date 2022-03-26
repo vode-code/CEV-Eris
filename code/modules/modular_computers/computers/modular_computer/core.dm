@@ -1,3 +1,6 @@
+GLOBAL_LIST_EMPTY(computers)
+
+
 /obj/item/modular_computer/Process()
 	if(!enabled) // The computer is turned off
 		last_power_usage = 0
@@ -37,7 +40,7 @@
 
 // Used to perform preset-specific hardware changes.
 /obj/item/modular_computer/proc/install_default_hardware()
-	cell = new suitable_cell(src)
+	hardware["cell"] = new suitable_cell(src)
 	return TRUE
 
 // Used to install preset-specific programs
@@ -47,7 +50,9 @@
 /obj/item/modular_computer/proc/install_default_programs_by_job(mob/living/carbon/human/H)
 	if(!istype(H))
 		return
-
+	var/obj/item/computer_hardware/hard_drive/target_hard_drive = hardware["hard_drive"]
+	if(!istype(target_hard_drive))
+		return
 	var/datum/job/jb = SSjob.GetJob(H.job)
 	if(!jb)
 		return
@@ -55,22 +60,25 @@
 	for(var/prog_type in jb.software_on_spawn)
 		var/datum/computer_file/program/prog_file = new prog_type
 		if(prog_file.is_supported_by_hardware(src))
-			hard_drive.store_file(prog_file)
+			target_hard_drive.store_file(prog_file)
 
 /obj/item/modular_computer/Initialize()
 	START_PROCESSING(SSobj, src)
 
-	if(stores_pen && ispath(stored_pen))
-		stored_pen = new stored_pen(src)
+	if(istype(src, /obj/item/modular_computer/pda))
+		var/obj/item/modular_computer/pda/penholder = src
+		penholder.stored_pen = new penholder.stored_pen(src)
 
 	install_default_hardware()
-	if(hard_drive)
+	if(hardware["hard_drive"])
 		install_default_programs()
-	if(scanner)
+	if(hardware["scanner"])
+		var/obj/item/computer_hardware/scanner/scanner = hardware["scanner"]
 		scanner.do_after_install(null, src)
 	update_icon()
 	update_verbs()
 	update_name()
+	GLOB.computers.Add(src)
 	. = ..()
 
 /obj/item/modular_computer/Destroy()
@@ -78,19 +86,20 @@
 	QDEL_LIST(terminals)
 	STOP_PROCESSING(SSobj, src)
 
-	if(stored_pen && !ispath(stored_pen))
-		QDEL_NULL(stored_pen)
+	if(istype(src, /obj/item/modular_computer/pda))
+		var/obj/item/modular_computer/pda/penholder = src
+		if(!ispath(penholder.stored_pen))
+			QDEL_NULL(penholder.stored_pen)
 
-	for(var/obj/item/CH in get_all_components())
+	for(var/obj/item/CH in hardware)
 		qdel(CH)
-	QDEL_NULL(cell)
+	GLOB.computers.Remove(src)
 	return ..()
 
 // A new computer hull was just built - remove all components
 /obj/item/modular_computer/Created()
-	for(var/obj/item/CH in get_all_components())
+	for(var/obj/item/CH in hardware)
 		qdel(CH)
-	QDEL_NULL(cell)
 
 /obj/item/modular_computer/emag_act(var/remaining_charges, var/mob/user)
 	if(computer_emagged)
@@ -127,6 +136,7 @@
 
 //skip_screen_check is used when set_light is called from update_icon
 /obj/item/modular_computer/set_light(range, brightness, color, skip_screen_check = FALSE)
+	var/obj/item/computer_hardware/led/led = hardware["led"]
 	if (enabled && led && led.enabled)
 		//We need to buff non handheld devices cause othervise their screen light might be brighter
 		brightness = (hardware_flag & (PROGRAM_PDA | PROGRAM_TABLET)) ? led.brightness_power : (led.brightness_power * 1.4)
@@ -154,6 +164,7 @@
 /obj/item/modular_computer/proc/turn_on(var/mob/user)
 	if(bsod)
 		return
+	var/obj/item/computer_hardware/tesla_link/tesla_link = hardware["tesla_link"]
 	if(tesla_link)
 		tesla_link.enabled = TRUE
 	var/issynth = issilicon(user) // Robots and AIs get different activation messages.
@@ -163,7 +174,7 @@
 		else
 			to_chat(user, SPAN_WARNING("You press the power button, but the computer fails to boot up, displaying variety of errors before shutting down again."))
 		return
-	if(processor_unit && try_use_power(0)) // Battery-run and charged or non-battery but powered by APC.
+	if(hardware["processor_unit"] && try_use_power(0)) // Battery-run and charged or non-battery but powered by APC.
 		if(issynth)
 			to_chat(user, SPAN_NOTICE("You send an activation signal to \the [src], turning it on"))
 		else
@@ -189,6 +200,7 @@
 
 // Returns 0 for No Signal, 1 for Low Signal and 2 for Good Signal. 3 is for wired connection (always-on)
 /obj/item/modular_computer/proc/get_ntnet_status(var/specific_action = FALSE)
+	var/obj/item/computer_hardware/network_card/network_card = hardware["network_card"]
 	if(network_card)
 		return network_card.get_signal(specific_action)
 	else
@@ -197,7 +209,7 @@
 /obj/item/modular_computer/proc/add_log(var/text)
 	if(!get_ntnet_status())
 		return FALSE
-	return ntnet_global.add_log(text, network_card)
+	return ntnet_global.add_log(text, hardware["network_card"])
 
 /obj/item/modular_computer/proc/shutdown_computer(loud = TRUE)
 	QDEL_LIST(terminals)
@@ -227,7 +239,7 @@
 			H.enabled()
 
 	// Autorun feature
-	autorun_program(hard_drive)
+	autorun_program(hardware["hard_drive"])
 
 	if(user)
 		ui_interact(user)
@@ -238,7 +250,7 @@
 		run_program(autorun.stored_data, disk)
 
 /obj/item/modular_computer/proc/minimize_program(mob/user)
-	if(!active_program || !processor_unit)
+	if(!active_program || !hardware["processor_unit"])
 		return
 
 	active_program.program_state = PROGRAM_STATE_BACKGROUND // Should close any existing UIs
@@ -271,6 +283,7 @@
 		update_icon()
 		return
 
+	var/obj/item/computer_hardware/processor_unit/processor_unit = hardware["processor_unit"]
 	if(all_threads.len >= processor_unit.max_programs)
 		to_chat(user, SPAN_WARNING("Maximal CPU load reached. Unable to run another program."))
 		return
@@ -315,11 +328,12 @@
 
 /obj/item/modular_computer/proc/check_update_ui_need()
 	var/ui_update_needed = FALSE
+	var/obj/item/cell/cell = hardware["cell"]
 	if(cell)
-		var/batery_percent = cell.percent()
-		if(last_battery_percent != batery_percent) //Let's update UI on percent change
+		var/battery_percent = cell.percent()
+		if(last_battery_percent != battery_percent) //Let's update UI on percent change
 			ui_update_needed = TRUE
-			last_battery_percent = batery_percent
+			last_battery_percent = battery_percent
 
 	if(stationtime2text() != last_world_time)
 		last_world_time = stationtime2text()
@@ -356,16 +370,18 @@
 		return ..()
 
 /obj/item/modular_computer/proc/set_autorun(program)
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive?.set_autorun(program)
 
 /obj/item/modular_computer/GetIdCard()
+	var/obj/item/computer_hardware/card_slot/card_slot = hardware["card_slot"]
 	if(card_slot && istype(card_slot.stored_card))
 		return card_slot.stored_card
 
 /obj/item/modular_computer/proc/update_name()
 
 /obj/item/modular_computer/get_cell()
-	return cell
+	return hardware["cell"]
 
 /obj/item/modular_computer/proc/has_terminal(mob/user)
 	for(var/datum/terminal/terminal in terminals)
@@ -382,10 +398,12 @@
 
 /obj/item/modular_computer/proc/getProgramByType(type, include_portable=TRUE)
 	var/datum/computer_file/F = null
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 
 	if(hard_drive?.check_functionality())
 		F = locate(type) in hard_drive.stored_files
 
+	var/obj/item/computer_hardware/hard_drive/portable/portable_drive = hardware["portable_drive"]
 	if(!F && include_portable && portable_drive?.check_functionality())
 		F = locate(type) in portable_drive.stored_files
 
@@ -393,10 +411,11 @@
 
 /obj/item/modular_computer/proc/getFileByName(name, include_portable=TRUE)
 	var/datum/computer_file/F = null
-
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	if(hard_drive?.check_functionality())
 		F = hard_drive.find_file_by_name(name)
 
+	var/obj/item/computer_hardware/hard_drive/portable/portable_drive = hardware["portable_drive"]
 	if(!F && include_portable && portable_drive?.check_functionality())
 		F = portable_drive.find_file_by_name(name)
 

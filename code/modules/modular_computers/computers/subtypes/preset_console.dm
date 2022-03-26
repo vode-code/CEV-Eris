@@ -3,15 +3,16 @@
 
 /obj/item/modular_computer/console/preset/install_default_hardware()
 	..()
-	processor_unit = new/obj/item/computer_hardware/processor_unit(src)
-	tesla_link = new/obj/item/computer_hardware/tesla_link(src)
-	hard_drive = new/obj/item/computer_hardware/hard_drive/advanced(src)
-	network_card = new/obj/item/computer_hardware/network_card/wired(src)
-	scanner = new /obj/item/computer_hardware/scanner/paper(src)
+	hardware["processor_unit"] = new/obj/item/computer_hardware/processor_unit(src)
+	hardware["tesla_link"] = new/obj/item/computer_hardware/tesla_link(src)
+	hardware["hard_drive"] = new/obj/item/computer_hardware/hard_drive/advanced(src)
+	hardware["network_card"] = new/obj/item/computer_hardware/network_card/wired(src)
+	hardware["scanner"] = new /obj/item/computer_hardware/scanner/paper(src)
 
 // Engineering
 /obj/item/modular_computer/console/preset/engineering/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/wordprocessor())
 	hard_drive.store_file(new/datum/computer_file/program/newsbrowser())
 	hard_drive.store_file(new/datum/computer_file/program/power_monitor())
@@ -28,6 +29,7 @@
 // Engineering supermatter monitor
 /obj/item/modular_computer/console/preset/engineering/supermatter/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/supermatter_monitor())
 	set_autorun("supmon")
 
@@ -39,6 +41,7 @@
 // Engineering shield control
 /obj/item/modular_computer/console/preset/engineering/shield/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/shield_control())
 	set_autorun("shieldcontrol")
 
@@ -55,10 +58,11 @@
 // Medical
 /obj/item/modular_computer/console/preset/medical/install_default_hardware()
 	..()
-	printer = new/obj/item/computer_hardware/printer(src)
+	hardware["printer"] = new/obj/item/computer_hardware/printer(src)
 
 /obj/item/modular_computer/console/preset/medical/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/wordprocessor())
 	hard_drive.store_file(new/datum/computer_file/program/newsbrowser())
 	hard_drive.store_file(new/datum/computer_file/program/camera_monitor())
@@ -78,10 +82,11 @@
 // Research
 /obj/item/modular_computer/console/preset/research/install_default_hardware()
 	..()
-	printer = new/obj/item/computer_hardware/printer(src)
+	hardware["printer"] = new/obj/item/computer_hardware/printer(src)
 
 /obj/item/modular_computer/console/preset/research/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/wordprocessor())
 	hard_drive.store_file(new/datum/computer_file/program/newsbrowser())
 	hard_drive.store_file(new/datum/computer_file/program/nttransfer())
@@ -102,6 +107,7 @@
 // Research administrator
 /obj/item/modular_computer/console/preset/research/sysadmin/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/records())
 	hard_drive.store_file(new/datum/computer_file/program/ntnetmonitor())
 	hard_drive.store_file(new/datum/computer_file/program/email_administration())
@@ -109,11 +115,12 @@
 // Command
 /obj/item/modular_computer/console/preset/command/install_default_hardware()
 	..()
-	printer = new/obj/item/computer_hardware/printer(src)
-	card_slot = new/obj/item/computer_hardware/card_slot(src)
+	hardware["printer"] = new/obj/item/computer_hardware/printer(src)
+	hardware["card_slot"] = new/obj/item/computer_hardware/card_slot(src)
 
 /obj/item/modular_computer/console/preset/command/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/email_client())
 	hard_drive.store_file(new/datum/computer_file/program/wordprocessor())
 	hard_drive.store_file(new/datum/computer_file/program/newsbrowser())
@@ -132,10 +139,11 @@
 // Security
 /obj/item/modular_computer/console/preset/security/install_default_hardware()
 	..()
-	printer = new/obj/item/computer_hardware/printer(src)
+	hardware["printer"] = new/obj/item/computer_hardware/printer(src)
 
 /obj/item/modular_computer/console/preset/security/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/wordprocessor())
 	hard_drive.store_file(new/datum/computer_file/program/newsbrowser())
 	hard_drive.store_file(new/datum/computer_file/program/camera_monitor())
@@ -157,6 +165,7 @@
 // Civilian
 /obj/item/modular_computer/console/preset/civilian/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/email_client())
 	hard_drive.store_file(new/datum/computer_file/program/chatclient())
 	hard_drive.store_file(new/datum/computer_file/program/wordprocessor())
@@ -170,10 +179,11 @@
 // Civilian Offices
 /obj/item/modular_computer/console/preset/civilian/professional/install_default_hardware()
 	..()
-	printer = new/obj/item/computer_hardware/printer(src)
+	hardware["printer"] = new/obj/item/computer_hardware/printer(src)
 
 /obj/item/modular_computer/console/preset/civilian/professional/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	var/datum/computer_file/program/crew_manifest/CM = locate(/datum/computer_file/program/crew_manifest) in hard_drive.stored_files
 	hard_drive.remove_file(CM)
 	hard_drive.store_file(new/datum/computer_file/program/records())
@@ -181,15 +191,17 @@
 // Civilian Library
 /obj/item/modular_computer/console/preset/civilian/professional/library/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new/datum/computer_file/program/library())
 
 // Trade Console
 /obj/item/modular_computer/console/preset/trade/install_default_hardware()
 	..()
-	card_slot = new/obj/item/computer_hardware/card_slot(src)
+	hardware["card_slot"] = new/obj/item/computer_hardware/card_slot(src)
 
 /obj/item/modular_computer/console/preset/trade/install_default_programs()
 	..()
+	var/obj/item/computer_hardware/hard_drive/hard_drive = hardware["hard_drive"]
 	hard_drive.store_file(new /datum/computer_file/program/trade())
 	set_autorun("trade")
 

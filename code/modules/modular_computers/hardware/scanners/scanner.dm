@@ -6,7 +6,7 @@
 	power_usage = 5
 	var/active_power_usage = 4000
 	icon_state = "scanner"
-	hardware_size = 1
+	w_class = 1
 	origin_tech = list(TECH_DATA = 2, TECH_ENGINEERING = 2)
 
 	var/driver_type = /datum/computer_file/program/scanner		// A program type that the scanner interfaces with and attempts to install on insertion.
@@ -22,17 +22,18 @@
 /obj/item/computer_hardware/scanner/proc/do_after_install(user, obj/item/modular_computer/device)
 	if(!driver_type || !device)
 		return 0
-	if(!device.hard_drive)
+	var/obj/item/computer_hardware/hard_drive/drive = device.hardware["hard_drive"]
+	if(!drive)
 		to_chat(user, "Driver installation for \the [src] failed: \the [device] lacks a hard drive.")
 		return 0
 	var/datum/computer_file/program/scanner/driver_file = new driver_type
-	var/datum/computer_file/program/scanner/old_driver = device.hard_drive.find_file_by_name(driver_file.filename)
+	var/datum/computer_file/program/scanner/old_driver = drive.find_file_by_name(driver_file.filename)
 	if(istype(old_driver))
 		to_chat(user, "Drivers found on \the [device]; \the [src] has been installed.")
 		old_driver.connect_scanner()
 		return 1
-	if(!device.hard_drive.store_file(driver_file))
-		to_chat(user, "Driver installation for \the [src] failed: file could not be written to \the [device.hard_drive].")
+	if(!drive.store_file(driver_file))
+		to_chat(user, "Driver installation for \the [src] failed: file could not be written to \the [drive].")
 		return 0
 	to_chat(user, "Driver software for \the [src] has been installed on \the [device].")
 	driver_file.computer = device

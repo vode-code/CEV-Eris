@@ -6,12 +6,12 @@
 	matter = list(MATERIAL_STEEL = 3, MATERIAL_GLASS = 1)
 	hardware_flag = PROGRAM_PDA
 	max_hardware_size = 1
+	hardware_capacity = 13
 	w_class = ITEM_SIZE_SMALL
 	screen_light_strength = 1.1
 	screen_light_range = 2
 	slot_flags = SLOT_ID | SLOT_BELT
-	stores_pen = TRUE
-	stored_pen = /obj/item/pen
+	var/obj/item/pen/stored_pen = /obj/item/pen
 	price_tag = 50
 	suitable_cell = /obj/item/cell/small //We take small battery
 
@@ -28,7 +28,22 @@
 /obj/item/modular_computer/pda/AltClick(var/mob/user)
 	if(!CanPhysicallyInteract(user))
 		return
+	var/obj/item/computer_hardware/card_slot/card_slot = hardware["card_slot"]
 	if(card_slot && istype(card_slot.stored_card))
 		eject_id()
+	else
+		..()
+
+/obj/item/modular_computer/pda/attackby(obj/item/W, mob/user, sound_mute = FALSE)
+	if(istype(W, /obj/item/pen))
+		var/obj/item/modular_computer/pda/penholder = src
+		if(istype(penholder.stored_pen))
+			to_chat(user, "<span class='notice'>There is already a pen in [src].</span>")
+			return
+		if(!insert_item(W, user))
+			return
+		penholder.stored_pen = W
+		update_verbs()
+		return
 	else
 		..()
