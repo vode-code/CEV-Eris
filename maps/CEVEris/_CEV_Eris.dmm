@@ -101494,7 +101494,7 @@
 /turf/simulated/floor/wood,
 /area/eris/neotheology/storage)
 "got" = (
-/obj/structure/closet/wardrobe/color/pink/artist,
+/obj/structure/closet/wardrobe/color/pink/clown,
 /turf/simulated/floor/carpet/gaycarpet,
 /area/eris/calliope)
 "gqH" = (
@@ -102032,10 +102032,6 @@
 	},
 /turf/simulated/open,
 /area/eris/engineering/gravity_generator)
-"idK" = (
-/obj/structure/closet/wardrobe/color/mixed,
-/turf/simulated/floor/carpet/gaycarpet,
-/area/eris/calliope)
 "ifq" = (
 /obj/spawner/pack/machine,
 /turf/simulated/floor/tiled/techmaint,
@@ -103668,10 +103664,6 @@
 /obj/effect/floor_decal/industrial/warning/corner,
 /turf/simulated/floor/tiled/steel/monofloor,
 /area/eris/quartermaster/hangarsupply)
-"nRF" = (
-/obj/structure/closet/wardrobe/color/pink,
-/turf/simulated/floor/carpet/gaycarpet,
-/area/eris/calliope)
 "nUt" = (
 /obj/structure/closet/coffin,
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -128477,7 +128469,7 @@ pMP
 eJj
 nDQ
 oFv
-nRF
+got
 pMP
 ivM
 nGj
@@ -128679,7 +128671,7 @@ pMP
 eJj
 nDQ
 oFv
-idK
+got
 pMP
 get
 ffR

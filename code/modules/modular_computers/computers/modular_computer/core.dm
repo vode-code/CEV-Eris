@@ -107,7 +107,7 @@ GLOBAL_LIST_EMPTY(computers)
 		return NO_EMAG_ACT
 	else
 		computer_emagged = TRUE
-		to_chat(user, "You emag \the [src]. Its screen flick_lights briefly.")
+		to_chat(user, "You emag \the [src]. Its screen flickers briefly.")
 		return TRUE
 
 /obj/item/modular_computer/update_icon()

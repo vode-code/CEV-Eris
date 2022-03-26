@@ -21,6 +21,22 @@
 	new /obj/item/clothing/shoes/color/brown(src)
 	new /obj/item/clothing/shoes/color/brown(src)
 
+
+/obj/structure/closet/wardrobe/color/pink/clown
+	name = "colorful clown clothes"
+
+/obj/structure/closet/wardrobe/color/pink/clown/populate_contents()
+	new/obj/item/bikehorn(src)
+	new/obj/item/clothing/glasses/monocle(src)
+	new/obj/item/storage/fancy/crayons(src)
+	new/obj/item/reagent_containers/spray/waterflower(src)
+	new/obj/item/device/pda/clown(src)
+	new/obj/item/clothing/gloves/color/rainbow(src)
+	new/obj/item/storage/backpack/clown(src)
+	new/obj/item/clothing/shoes/clown_shoes(src)
+	new/obj/item/clothing/under/rank/clown(src)
+	new/obj/item/clothing/mask/gas/clown_hat(src)
+
 /obj/structure/closet/wardrobe/color/black
 	name = "black wardrobe"
 	icon_door = "black"
