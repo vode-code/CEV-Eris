@@ -129,6 +129,7 @@
 	matter = list(MATERIAL_PLASTIC = 2)
 	throw_speed = 3
 	throw_range = 15
+	matter = list(MATERIAL_PLASTIC = 5)
 	attack_verb = list("HONKED")
 	spawn_tags = SPAWN_TAG_ITEM_CLOWN
 	var/spam_flag = 0
