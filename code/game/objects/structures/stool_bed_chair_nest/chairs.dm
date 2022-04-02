@@ -131,15 +131,17 @@
 	return FALSE
 
 /obj/structure/bed/chair/comfy/brown/captain/affect_grab(var/mob/user, var/mob/target)
-	if(target.ckey != "trexdude") // I heard that Simski's ckey is trexdude
-		if(alert(user, "Do you want to end the round?", "Important Decision", "Yes", "No") == "Yes")
+	if(target.ckey != "trexdude" && !istype(target, /mob/living/simple_animal/iriska)) // I heard that Simski's ckey is trexdude,
+		if(alert(user, "Do you want to end the round?", "Important Decision", "Yes", "No") == "Yes") // and Iriska clearly can sit wherever she wants.
 			. = ..()
 	else
 		. = ..()
 
 /obj/structure/bed/chair/comfy/brown/captain/post_buckle_mob(var/mob/living/M)
-	if(M.ckey == "trexdude")// I heard that Simski's ckey is trexdude
-		. = ..()
+	if(M.ckey == "trexdude" && !istype(M, /mob/living/simple_animal/iriska))// I heard that Simski's ckey is trexdude
+		. = ..() // and Iriska clearly can sit wherever she wants.
+	else if(isghost(M)) // apparently this happened
+		to_chat(M, "The captain's chair ignores you.")
 	else
 		detonate()
 
@@ -152,15 +154,19 @@
 /obj/structure/bed/chair/comfy/brown/captain/attackby(obj/item/W as obj, mob/user as mob)
 	if(istype(W, /obj/item/grab))
 		var/obj/item/grab/G = W
-		if(G.affecting.ckey != "trexdude") // I heard that Simski's ckey is trexdude
-			if(alert(user, "Do you want to end the round?", "Important Decision", "Yes", "No") == "Yes")
+		if(G.affecting.ckey != "trexdude" && !istype(G.affecting, /mob/living/simple_animal/iriska)) // I heard that Simski's ckey is trexdude,
+			if(alert(user, "Do you want to end the round?", "Important Decision", "Yes", "No") == "Yes") // and Iriska clearly can sit wherever she wants.
 				. = ..()
 		else
 			. = ..()
 
 /obj/structure/bed/chair/comfy/brown/captain/MouseDrop_T(mob/target, mob/user)
-	if(target.ckey != "trexdude")
-		if(alert(user, "Do you want to end the round?", "Important Decision", "Yes", "No") == "Yes")
+	if(isghost(user)) // or perhaps this was it
+		to_chat(user, SPAN_NOTICE("A ghost cannot make such an important decision."))
+		return
+
+	if(target.ckey != "trexdude" && !istype(target, /mob/living/simple_animal/iriska)) // I heard that Simski's ckey is trexdude,
+		if(alert(user, "Do you want to end the round?", "Important Decision", "Yes", "No") == "Yes") // and Iriska clearly can sit wherever she wants.
 			. = ..()
 	else
 		. = ..()
