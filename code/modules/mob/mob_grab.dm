@@ -263,7 +263,7 @@
 
 	// Adjust the grab warmup using assailant's ROB stat
 	var/assailant_stat = assailant.stats.getStat(STAT_ROB)
-	var/affected_stat = affected.getStat(STAT_ROB)
+	var/affect_stat = affecting.stats.getStat(STAT_ROB)
 	var/warmup_increase
 	if(assailant_stat > 0)
 		// Positive ROB decreases warmup, but not linearly
@@ -277,12 +277,13 @@
 	if(state < GRAB_AGGRESSIVE)
 		if(!allow_upgrade)
 			return
-		total_warmup = max(0, UPGRADE_WARMUP + round(warmup_increase+(affected.a_intent = I_HELP ? affected_stat(STAT_ROB) ** 0.8 : 0)) // aggressive grab can be allowed
+		var/conditionapplies = affecting.a_intent == I_HELP ? affect_stat ** 0.8 : 0
+		total_warmup = max(0, UPGRADE_WARMUP + round(warmup_increase+conditionapplies)) // aggressive grab can be allowed
 		assailant.visible_message(SPAN_WARNING("[assailant] is securing \his grip on [affecting]!"))
 		icon_state = "grabbed1"
 		hud.icon_state = "reinforce"
 		state = GRAB_SECURING
-		if(upgrade_grab(total_warmup + max(-10, min(affected.a_intent == I_HELP ? 0 : affected_stat)),"reinforce_final", GRAB_AGGRESSIVE))
+		if(upgrade_grab(total_warmup,"reinforce_final", GRAB_AGGRESSIVE))
 			if(!affecting.lying)
 				assailant.visible_message(SPAN_WARNING("[assailant] has grabbed [affecting] aggressively!"))
 				affecting.attack_log += "\[[time_stamp()]\] <font color='orange'>Has been grabbed by [assailant.name] ([assailant.ckey])</font>"
@@ -315,12 +316,12 @@
 		hud.name = "choke"
 
 	else if(state < GRAB_UPGRADING)
-		total_warmup = max(0, UPGRADE_WARMUP + round(warmup_increase+(affected_stat(STAT_ROB) ** 0.8))
+		total_warmup = max(0, UPGRADE_WARMUP + round(warmup_increase+(affect_stat ** 0.8)))
 		assailant.visible_message(SPAN_DANGER("[assailant] starts to tighten \his grip on [affecting]'s neck!"))
 		hud.icon_state = "kill"
 		hud.name = "Kill"
 		state = GRAB_UPGRADING
-		if(upgrade_grab(total_warmup + max(-10, min(affected_stat, UPGRADE_WARMUP)), "kill_final", GRAB_KILL))
+		if(upgrade_grab(total_warmup, "kill_final", GRAB_KILL))
 			assailant.visible_message(SPAN_DANGER("[assailant] has tightened \his grip on [affecting]'s neck!"))
 			affecting.attack_log += "\[[time_stamp()]\] <font color='orange'>Has been strangled (kill intent) by [assailant.name] ([assailant.ckey])</font>"
 			assailant.attack_log += "\[[time_stamp()]\] <font color='red'>Strangled (kill intent) [affecting.name] ([affecting.ckey])</font>"
