@@ -11,3 +11,26 @@
   - bugfix: Maintshrooms no longer treat solid objects as a mere suggestion
   - bugfix: Maintshrooms now check if the other end of a burrow is too bright for
       it to grow before spreading
+2023-03-18:
+  Firefox13:
+  - admin: increased upload limit to 10MB
+  Hyperio:
+  - rscadd: Add matter to instruments
+  - rscadd: Block people from leaving/entering shuttles through their ceiling
+  - rscadd: Add tech level to bonsai tree
+  Kurgis:
+  - bugfix: Cyborg Service Fabricators use the correct icon file.
+  Pink-Chink:
+  - bugfix: Randomizes parallax again
+  - rscadd: Added Destroy() cleanup to /datum/nano_module/appearance_changer
+  - code_imp: Made some text compliant with Github's TOS
+  TheLeopold:
+  - bugfix: 'fixed wrong materials when recycling: dusters, cruciform, jar'
+  - rscadd: added matter to breath mask, gas mask, glowstick
+  - bugfix: renamed "glass ashtray" design to "ashtray"
+  - tweak: Roundstart NT disks can be ordered from EOTP
+  - rscadd: NT can build silver door, which allows anyone with cruciform to open it
+  - bugfix: fixed rogue pixel in open/close animation of NT doors
+  - imageadd: added silver NT door sprite
+  - rscadd: autolathe recipe for handheld mirror
+  - tweak: handheld mirror has materials
