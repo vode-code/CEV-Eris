@@ -28,6 +28,7 @@
 			var/obj/machinery/amesilo/tocheck = machinetocheck
 			if(tocheck.prime) // there can only be one.
 				silo = tocheck
+				silo.linked.Add(src)
 
 /obj/machinery/amerecycler/Destroy()
 	qdel(wires)
@@ -98,7 +99,13 @@
 		if(istype(I, /obj/item/storage/deferred))
 			var/obj/item/storage/deferred/fillinsides
 			fillinsides.populate_contents()
-		if(istype(I, /obj/item/storage))
+		var/success = TRUE
+		if(istype(I, /obj/item/storage/secure))
+			var/obj/item/storage/secure/lockable = I
+			if(lockable.locked)
+				to_chat(user, (SPAN_WARNING("[I] is locked.")))
+				success = FALSE
+		if(success && istype(I, /obj/item/storage))
 			var/obj/item/storage/todump = I
 			for(var/obj/item/emptyit in todump.contents)
 				 // there are better options than to lie when you cannot see a way to get what you want.
@@ -167,6 +174,8 @@
 	for(var/obj/O in evaluated.GetAllContents()) // can now recycle empty shells to get at the contents
 		if(length(O.get_matter()))
 			matsinitem += O.get_matter()
+	if(length(matsinitem) < 1)
+		return FALSE
 	for(var/i in matsinitem)
 		if(!(i in silo.materials_supported)) // determine all materials are suitable
 			return FALSE // if it does not contain the right materials, it is not stored
@@ -187,7 +196,8 @@
 		stufftorecycle.Add(itemtorecycle)
 	else
 		stufftorecycle |= saleworthy_items
-
+	if(!length(stufftorecycle))
+		return
 	for(var/toadd in stufftorecycle)
 		combinedvalue += saleworthy_items[toadd] * 0.8 // 20% fee on vendor
 	if(!combinedvalue || combinedvalue > silo?.my_account.money) // can we afford it all?
@@ -209,7 +219,10 @@
 		T.apply_to(silo.my_account)
 		qdel(getthisone) // we first add the item to the garbage queue
 
-	saleworthy_items.Cut(saleworthy_items.Find(stufftorecycle[1]),saleworthy_items.Find(length(stufftorecycle)))
+	if(length(stufftorecycle) > 1)
+		saleworthy_items.Cut() // we melted it all, because we could afford it all.
+	else
+		saleworthy_items.Remove(stufftorecycle[1])
 	stufftorecycle = null // then we remove what should be the remaining references
 	playsound(loc, pick('sound/items/polaroid1.ogg', 'sound/items/polaroid2.ogg'), 50, 1)
 	silo.addmaterial(combinedmats)
@@ -236,6 +249,8 @@
 		combinedvalue += saleworthy_items[currentitem] / 5 // add all the fees together
 	if(combinedvalue > moneyinput) // if it's too much, cancel it all
 		flick("recycle_screen_red", overlays[1])
+		if(!BITTEST(wire_flags, WIRE_SPEAKER))
+			audible_message("[src] outputs \"Error: Input Insufficient.\"")
 		return FALSE
 	var/list/totalmaterials = list()
 	for(var/obj/currentitem in stufftorecycle)
@@ -254,7 +269,10 @@
 		T.apply_to(silo.my_account)
 		qdel(currentitem) // we first add the item to the garbage queue
 
-	saleworthy_items.Cut(saleworthy_items.Find(stufftorecycle[1]),saleworthy_items.Find(length(stufftorecycle))) 
+	if(length(stufftorecycle) > 1)
+		saleworthy_items.Cut() // we melted it all, because we could afford it all.
+	else
+		saleworthy_items.Remove(stufftorecycle[1])
 	stufftorecycle = null // then we remove what should be the remaining references
 
 	for(var/materialtype in totalmaterials) // actually spawn the stacks
@@ -452,6 +470,7 @@
 	var/datum/money_account/moneycard
 	var/obj/item/spacecash/ewallet/chargecard
 	var/obj/item/spacecash/bundle/PakKash
+	var/list/linked = list()
 	var/list/PortMats = list()
 
 /obj/machinery/amesilo/LateInitialize()
@@ -472,6 +491,7 @@
 		var/datum/money_account/M = new()
 		M.owner_name = "AME"
 		M.account_name = "AME Currency Account"
+		M.account_number = rand(111111, 999999)
 		var/datum/transaction/T = new(2000, "AME", "Account creation", "Asters Automated Material Exchange Re-Initialization Procedure")
 		T.apply_to(M)
 		all_money_accounts.Add(M)
@@ -496,6 +516,7 @@
 			var/obj/machinery/amerecycler/toreset = machinetocheck
 			toreset.silo = src
 			toreset.update_icon()
+			linked.Add(toreset)
 
 /obj/machinery/amesilo/proc/setaccount(accountnumber)
 	var/accountgrabbed = get_account(accountnumber)
@@ -509,6 +530,7 @@
 			chargecard = chargedcard
 			to_chat(user, SPAN_NOTICE("You register [I] with [src]."))
 		else if(istype(I, /obj/item/spacecash/bundle))
+			user.remove_from_mob(I, drop = FALSE)
 			I.forceMove(src)
 			PakKash = I
 			to_chat(user, SPAN_NOTICE("You feed [I] to the PakPort on [src]."))
@@ -539,7 +561,7 @@
 		var/obj/item/stack/material/input = I
 		if(input.material.name in materials_supported)
 			to_chat(user, SPAN_NOTICE("You feed [I] into [src]."))
-			user.remove_from_mob(I)
+			user.remove_from_mob(I, drop = FALSE)
 			I.forceMove(src)
 			PortMats |= I
 		else
@@ -552,12 +574,10 @@
 	lastprime = null
 	QDEL_NULL(PakKash)
 	if(prime) // we are prime, so recyclers may have us as their silo
-		for(var/machinetocheck in GLOB.machines) // link the recyclers
-			if(istype(machinetocheck, /obj/machinery/amerecycler))
-				var/obj/machinery/amerecycler/toreset = machinetocheck
-				toreset.silo = null
-				toreset.update_icon()
-
+		for(var/obj/machinery/amerecycler/toreset in linked) // unlink the recyclers
+			toreset.silo = null
+			toreset.update_icon()
+	linked = list()
 
 /obj/machinery/amesilo/proc/selleverything()
 	for(var/tosell in materials_stored)
@@ -586,6 +606,11 @@
 		if(current > highestthreshold)
 			highestthreshold = current
 	icon_state = initial(icon_state)+"[highestthreshold]"
+
+/obj/machinery/amesilo/power_change()
+	..()
+	for(var/obj/machinery/amerecycler/toupdate in linked)
+		toupdate.update_icon()
 
 /obj/machinery/amesilo/examine(mob/user, distance, infix, suffix)
 	. = ..()
