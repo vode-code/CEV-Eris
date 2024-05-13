@@ -27,6 +27,10 @@
 		if(istype(machinetocheck, /obj/machinery/amesilo))
 			var/obj/machinery/amesilo/tocheck = machinetocheck
 			if(tocheck.prime) // there can only be one.
+				var/area/areachecked = get_area(tocheck)
+				var/area/my_area = get_area(src)
+				if(my_area.vessel != areachecked.vessel) // as long as you're paying taxes in SOME area, it doesn't matter which.
+					continue
 				silo = tocheck
 				silo.linked.Add(src)
 
@@ -199,7 +203,7 @@
 	if(!length(stufftorecycle))
 		return
 	for(var/toadd in stufftorecycle)
-		combinedvalue += saleworthy_items[toadd] * 0.8 // 20% fee on vendor
+		combinedvalue += round(saleworthy_items[toadd] * 0.8) // 20% fee on vendor, rounded up.
 	if(!combinedvalue || combinedvalue > silo?.my_account.money) // can we afford it all?
 		flick("recycle_screen_red", overlays[1])
 		if(!BITTEST(wire_flags, WIRE_SPEAKER))
@@ -215,6 +219,7 @@
 		for(var/toadd in matter)
 			combinedmats[toadd] += matter[toadd]
 		var/sellvalue = saleworthy_items[getthisone] * 0.8 // 20% fee
+		sellvalue = round(sellvalue) // don't make it round and you won't lose your money
 		var/datum/transaction/T = new(-sellvalue, "", "Recycling payout for [getthisone.name]", src)
 		T.apply_to(silo.my_account)
 		qdel(getthisone) // we first add the item to the garbage queue
@@ -227,6 +232,7 @@
 	playsound(loc, pick('sound/items/polaroid1.ogg', 'sound/items/polaroid2.ogg'), 50, 1)
 	silo.addmaterial(combinedmats)
 	spawn_money(combinedvalue, loc)
+	silo.updatesubsidy()
 	flick("recycle_vend", src)
 	update_icon()
 
@@ -246,7 +252,7 @@
 		return
 	var/combinedvalue = 0
 	for(var/currentitem in stufftorecycle)
-		combinedvalue += saleworthy_items[currentitem] / 5 // add all the fees together
+		combinedvalue += CEILING(saleworthy_items[currentitem] / 5, 1) // add all the fees together, rounded as it actually does.
 	if(combinedvalue > moneyinput) // if it's too much, cancel it all
 		flick("recycle_screen_red", overlays[1])
 		if(!BITTEST(wire_flags, WIRE_SPEAKER))
@@ -264,9 +270,11 @@
 			var/amount = currentitemmaterials[materialtype]
 			totalmaterials[materialtype] += amount
 		currentitemsvalue *= 0.2 // 20% fee to recycle
+		currentitemsvalue = CEILING(currentitemsvalue, 1) // good luck keeping your money here, although this is still cheaper than rounding twice
 		moneyinput -= currentitemsvalue
 		var/datum/transaction/T = new(currentitemsvalue, "", "Recycling fee for [currentitem.name]", src)
 		T.apply_to(silo.my_account)
+		silo.taxdebt += currentitemsvalue/32
 		qdel(currentitem) // we first add the item to the garbage queue
 
 	if(length(stufftorecycle) > 1)
@@ -404,6 +412,7 @@
 				moneyinput -= buyprice
 				var/datum/transaction/T = new(buyprice, "", "Material Purchase", src)
 				T.apply_to(silo.my_account)
+				silo.taxdebt += buyprice/32
 				silo.ejectmaterial(materialtobuy, buyamount, get_turf(src))
 				flick("recycle_vend", src)
 				. = TRUE
@@ -431,6 +440,8 @@
 			moneyinput = 0
 			return TRUE
 	update_icon()
+
+#define MINIMUM_BUDGET 800 // tax purposes
 
 /obj/machinery/amesilo
 	name = "automated material exchange silo"
@@ -472,10 +483,14 @@
 	var/obj/item/spacecash/bundle/PakKash
 	var/list/linked = list()
 	var/list/PortMats = list()
+	var/taxdebt = 0
 
 /obj/machinery/amesilo/LateInitialize()
 	. = ..()
 	update_icon()
+	var/area/areatocheck = get_area(src)
+	if(areatocheck.vessel != "CEV Eris") // this machine pays taxes, and so should you.
+		return FALSE
 	for(var/machinetocheck in GLOB.machines)
 		if(istype(machinetocheck, /obj/machinery/amesilo))
 			var/obj/machinery/amesilo/tocheck = machinetocheck
@@ -513,10 +528,13 @@
 		my_account = external_accounts["AME"]
 	for(var/machinetocheck in GLOB.machines) // link the recyclers
 		if(istype(machinetocheck, /obj/machinery/amerecycler))
-			var/obj/machinery/amerecycler/toreset = machinetocheck
-			toreset.silo = src
-			toreset.update_icon()
-			linked.Add(toreset)
+			var/area/areachecked = get_area(machinetocheck)
+			var/area/my_area = get_area(src)
+			if(areachecked.vessel == my_area.vessel) // they pay taxes to the same captain
+				var/obj/machinery/amerecycler/toreset = machinetocheck
+				toreset.silo = src
+				toreset.update_icon()
+				linked.Add(toreset)
 
 /obj/machinery/amesilo/proc/setaccount(accountnumber)
 	var/accountgrabbed = get_account(accountnumber)
@@ -571,6 +589,13 @@
 /obj/machinery/amesilo/Destroy()
 	. = ..()
 	selleverything()
+	if(my_account.money > MINIMUM_BUDGET)
+		var/cleanamount = round(taxdebt)
+		var/datum/transaction/pay = new(cleanamount, my_account.get_name(), "Final Payment of [src]", src)
+		var/datum/transaction/tax = new(-cleanamount, moneycard.get_name(), "Final Payment of [src]", src)
+		tax.apply_to(my_account)
+		pay.apply_to(department_accounts[DEPARTMENT_COMMAND])
+		taxdebt = 0
 	lastprime = null
 	QDEL_NULL(PakKash)
 	if(prime) // we are prime, so recyclers may have us as their silo
@@ -595,6 +620,7 @@
 	materials_stored[materialtosell] -= amount
 	var/datum/transaction/T = new(cost, my_account.get_name(), "Export", TRADE_SYSTEM_IC_NAME)
 	T.apply_to(my_account)
+	taxdebt += cost/16 // taxed double
 	. = TRUE
 	applybudget() // excess income is sent to associate account
 
@@ -619,6 +645,7 @@
 
 
 /obj/machinery/amesilo/proc/applybudget()
+	settledebt() // taxes first
 	if((my_account?.money > budget+1) && associate_account)
 		var/difference = round(my_account.money - budget)
 		var/datum/transaction/frommine = new(difference, my_account.get_name(), "Associate Payment", src)
@@ -627,7 +654,7 @@
 		tomine.apply_to(my_account)
 
 /obj/machinery/amesilo/proc/setbudget(newbudget)
-	budget = max(800, newbudget) // be able to buy at least a little
+	budget = max(MINIMUM_BUDGET, newbudget) // be able to buy at least a little
 	. = budget
 	applybudget()
 
@@ -661,6 +688,19 @@
 		if(materials_stored[matname] > sellthreshold)
 			sellonething(matname, materials_stored[matname] - sellthreshold) // sell excess
 		
+/obj/machinery/amesilo/proc/updatesubsidy()
+	if(my_account.money <= 400)
+		if(department_accounts[DEPARTMENT_COMMAND])
+			var/datum/money_account/commandaccount = department_accounts[DEPARTMENT_COMMAND]
+			if(commandaccount.money < MINIMUM_BUDGET)
+				return FALSE
+			var/totransfer = MINIMUM_BUDGET-my_account.money
+			taxdebt += totransfer
+			var/datum/transaction/frommine = new(-totransfer, my_account.get_name(), "Subsidy Payment", src)
+			frommine.apply_to(commandaccount)
+			var/datum/transaction/tomine = new(totransfer, commandaccount.get_name(), "Subsidy Payment", src)
+			tomine.apply_to(my_account)
+
 /obj/machinery/amesilo/proc/ejectmaterial(materialtoremove, amount, atom/location)
 	if(!materials_stored[materialtoremove])
 		return FALSE
@@ -692,6 +732,9 @@
 		. = FALSE
 
 /obj/machinery/amesilo/proc/resetprime() // this proc adds prime status when all other silos do not have prime
+	var/area/checkarea = get_area(src)
+	if(checkarea.vessel != "CEV Eris") // this machine pays taxes, and so should you.
+		return FALSE
 	for(var/machinetocheck in GLOB.machines)
 		if(istype(machinetocheck, /obj/machinery/amesilo))
 			var/obj/machinery/amesilo/tocheck = machinetocheck
@@ -709,9 +752,23 @@
 	my_account = external_accounts["AME"]
 	for(var/machinetocheck in GLOB.machines) // link the recyclers
 		if(istype(machinetocheck, /obj/machinery/amerecycler))
-			var/obj/machinery/amerecycler/toreset = machinetocheck
-			toreset.silo = src
-			toreset.update_icon()
+			var/area/area_checked = get_area(machinetocheck)
+			var/area/this_area = get_area(src)
+			if(area_checked.vessel == this_area.vessel) // they pay taxes to the same captain
+				var/obj/machinery/amerecycler/toreset = machinetocheck
+				toreset.silo = src
+				toreset.update_icon()
+
+/obj/machinery/amesilo/proc/settledebt()
+	if(my_account.money > MINIMUM_BUDGET && taxdebt >= 100) // the taxes are paid in chunks of 100,
+		var/sendthis = round(min(taxdebt, my_account.money - MINIMUM_BUDGET)/100)
+		if(sendthis <= 0) // and only if they wouldn't trigger a subsidy.
+			return FALSE
+		var/datum/transaction/pay = new(sendthis, my_account.get_name(), "Tax Payment", src)
+		var/datum/transaction/tax = new(-sendthis, moneycard.get_name(), "Tax Payment", src)
+		tax.apply_to(my_account)
+		pay.apply_to(department_accounts[DEPARTMENT_COMMAND])
+		taxdebt = max(0, taxdebt-sendthis)
 
 /obj/machinery/amesilo/emag_act(remaining_charges, mob/user, emag_source)
 	. = ..()
@@ -840,6 +897,7 @@
 					return FALSE
 				var/obj/item/stack/material/chosen = PortMats[roundedselected]
 				var/currentprice = chosen.price_tag * chosen.amount * 0.9
+				currentprice = round(currentprice) // don't make it round and you won't lose your money
 				if(my_account.money < currentprice)
 					return TRUE
 
@@ -863,6 +921,7 @@
 				var/currentprice = 0
 				for(var/obj/item/stack/material/tosell in PortMats) // first loop through the list and find the total price
 					currentprice += tosell.price_tag * tosell.amount * 0.9
+				currentprice = round(currentprice) // don't make it round and you won't lose your money
 				if(currentprice > my_account.money) // if it's not possible to buy them all, buy none of them, force them to stop HREFing and start using the UI
 					return TRUE
 				if(moneycard)
@@ -882,6 +941,7 @@
 					chargecard.worth += currentprice
 					var/datum/transaction/T = new(-currentprice, chargecard.owner_name, "Material Sale", src)
 					T.apply_to(my_account)
+			updatesubsidy()
 
 
 		if("buymat")
@@ -893,6 +953,7 @@
 			var/amountchoice = params["amount"]
 			amountchoice = clamp(amountchoice, 0, materials_stored[materialtobuy])
 			var/buyprice = (initial(stack.price_tag) * amountchoice) * 1.1 // the price for the materials plus the 10% fee
+			buyprice = CEILING(buyprice, 1) // don't make it round and you won't lose your money
 			if(moneycard)
 				if(moneycard.suspended)
 					return TRUE
@@ -913,6 +974,8 @@
 					chargecard.worth -= buyprice
 					var/datum/transaction/T = new(buyprice, chargecard.owner_name, "Material Purchase", src)
 					T.apply_to(my_account)
+			taxdebt += buyprice/32
+			settledebt()
 			ejectmaterial(materialtobuy, amountchoice, get_turf(src))
 
 		if("eject")
@@ -938,5 +1001,5 @@
 				return FALSE
 
 	
-
+#undef MINIMUM_BUDGET
 #undef SPRITECAPACITY
