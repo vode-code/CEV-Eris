@@ -6,7 +6,7 @@ tools/deploy.sh ci_test
 
 #test config
 cp tools/ci/ci_config.txt ci_test/config/config.txt
-cat ci_test/config/config.txt
+
 cd ci_test
 DreamDaemon cev_eris.dmb -close -trusted -verbose -params "log-directory=ci"
 cd ..
