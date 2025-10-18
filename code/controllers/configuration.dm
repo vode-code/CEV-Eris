@@ -249,7 +249,7 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 /datum/configuration/proc/load(filename, type = "config") //the type can also be game_options, in which case it uses a different switch. not making it separate to not copypaste code - Urist
 	var/list/Lines = file2list(filename)
 
-	log_misc("loading [filename]")
+	world.log << "loading [filename]"
 	for(var/t in Lines)
 		if(!t)	continue
 
