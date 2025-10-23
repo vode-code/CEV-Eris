@@ -780,6 +780,7 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 
 /datum/configuration/proc/loadsql(filename)  // -- TLE
 	var/list/Lines = file2list(filename)
+	world.log << "loading [filename]"
 	for(var/t in Lines)
 		if(!t)	continue
 
