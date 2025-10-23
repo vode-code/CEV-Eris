@@ -1,8 +1,5 @@
-SQL_ENABLED
 address 127.0.0.1
 port 3306
 database tg_ci
-FEEDBACK_DATABASE tg_ci
-FEEDBACK_TABLEPREFIX
 login root
 password root
