@@ -15,7 +15,7 @@ var/global/datum/global_init/init = new ()
 */
 
 /datum/global_init/New()
-	world.log << "attempted init"
+	log_world("attempted init")
 	generate_gameid()
 	load_configuration()
 	makeDatumRefLists()
@@ -253,7 +253,7 @@ var/world_topic_spam_protect_time = world.timeofday
 
 
 /proc/load_configuration()
-	world.log << "attempted load"
+	log_world("attempted load of configuration")
 	config = new /datum/configuration()
 	config.load("config/config.txt")
 	config.load("config/game_options.txt", "game_options")
