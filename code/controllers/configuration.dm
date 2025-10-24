@@ -806,19 +806,14 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 		switch (name)
 			if ("address")
 				sqladdress = value
-				world.log << "adr [value]"
 			if ("port")
 				sqlport = value
-				world.log << "port [value]"
 			if ("database")
 				sqldb = value
-				world.log << "db [value]"
 			if ("login")
 				sqllogin = value
-				world.log << "db [value]"
 			if ("password")
 				sqlpass = value
-				world.log << "adr [value]"
 			else
 				log_misc("Unknown setting in configuration: '[name]'")
 
