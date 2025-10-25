@@ -2,6 +2,12 @@
 set -euo pipefail
 
 source dependencies.sh
+# This cuts some time down by omitting `man`
+sudo tee /etc/dpkg/dpkg.cfg.d/01_nodoc > /dev/null << 'EOF'
+path-exclude /usr/share/doc/*
+path-exclude /usr/share/man/*
+path-exclude /usr/share/info/*
+EOF
 
 if [ -d "$HOME/BYOND/byond/bin" ] && grep -Fxq "${BYOND_MAJOR}.${BYOND_MINOR}" $HOME/BYOND/version.txt;
 then
