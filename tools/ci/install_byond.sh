@@ -9,6 +9,10 @@ path-exclude /usr/share/man/*
 path-exclude /usr/share/info/*
 EOF
 
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt install libcurl4:i386
+
 if [ -d "$HOME/BYOND/byond/bin" ] && grep -Fxq "${BYOND_MAJOR}.${BYOND_MINOR}" $HOME/BYOND/version.txt;
 then
   echo "Using cached directory."
