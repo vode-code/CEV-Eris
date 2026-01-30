@@ -3,6 +3,7 @@
 	desc = "The NT Mk58 is a cheap, ubiquitous sidearm, that was produced by a NanoTrasen subsidiary. Uses standard .35 and high capacity magazines."
 	icon = 'icons/obj/guns/projectile/modular/mk58.dmi'
 	icon_state = "frame" // frame_gray, frame_black, frame_tan
+	slot_flags = SLOT_BELT|SLOT_HOLSTER
 	w_class = ITEM_SIZE_NORMAL
 	origin_tech = list(TECH_COMBAT = 1, TECH_MATERIAL = 1) // Parts can give better tech
 	magazine_type = /obj/item/ammo_magazine/pistol // Default magazine, only relevant for spawned pistols, not crafted or printed ones
