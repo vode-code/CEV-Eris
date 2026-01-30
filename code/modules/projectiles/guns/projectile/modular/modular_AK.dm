@@ -24,12 +24,6 @@
 	serial_type = "FS"
 
 	required_parts = list(/obj/item/part/gun/modular/mechanism/autorifle = 0, /obj/item/part/gun/modular/barrel = 0, /obj/item/part/gun/modular/grip = 0, /obj/item/part/gun/modular/stock = -1)
-	init_firemodes = list(
-		FULL_AUTO_400,
-		SEMI_AUTO_300,
-		BURST_3_ROUND,
-		BURST_5_ROUND
-		)
 
 /obj/item/gun/projectile/modular/ak/get_initial_name()
 	var/stock_type = (PARTMOD_FOLDING_STOCK & spriteTags) ? "AR" : "Car"
